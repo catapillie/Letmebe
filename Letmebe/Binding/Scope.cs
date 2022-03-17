@@ -6,18 +6,19 @@ namespace Letmebe.Binding {
 
         private readonly Dictionary<(string, int), BoundUserType> types = new();
         private readonly Dictionary<string, BoundSymbol> variables = new();
+        private readonly Dictionary<BoundFunctionTemplate, BoundFunctionSymbol> functions = new();
 
         public Scope(Scope? parentScope = null) {
             ParentScope = parentScope;
         }
 
-        public bool TryLookupType(string name, int genericArgumentCount, out BoundUserType boundType) {
-            if (types.TryGetValue((name, genericArgumentCount), out boundType!))
+        public bool TryLookupType(string name, int genericArgumentCount, out BoundUserType type) {
+            if (types.TryGetValue((name, genericArgumentCount), out type!))
                 return true;
             else if (ParentScope is not null)
-                return ParentScope.TryLookupType(name, genericArgumentCount, out boundType);
+                return ParentScope.TryLookupType(name, genericArgumentCount, out type);
 
-            boundType = new(name, genericArgumentCount);
+            type = new(name, genericArgumentCount);
             return false;
         }
 
@@ -25,17 +26,17 @@ namespace Letmebe.Binding {
             if (types.ContainsKey((name, genericArgumentCount)))
                 return false;
 
-            types[(name, genericArgumentCount)] = new BoundUserType(name, genericArgumentCount);
+            types[(name, genericArgumentCount)] = new(name, genericArgumentCount);
             return true;
         }
 
-        public bool TryLookupVariable(string name, out BoundSymbol boundType) {
-            if (variables.TryGetValue(name, out boundType!))
+        public bool TryLookupVariable(string name, out BoundSymbol symbol) {
+            if (variables.TryGetValue(name, out symbol!))
                 return true;
             else if (ParentScope is not null)
-                return ParentScope.TryLookupVariable(name, out boundType);
+                return ParentScope.TryLookupVariable(name, out symbol);
 
-            boundType = new(null!, name);
+            symbol = new(null!, name);
             return false;
         }
 
@@ -43,7 +44,25 @@ namespace Letmebe.Binding {
             if (variables.ContainsKey(name))
                 return false;
 
-            variables[name] = new BoundSymbol(type, name);
+            variables[name] = new(type, name);
+            return true;
+        }
+
+        public bool TryLookupFunction(BoundFunctionTemplate template, out BoundFunctionSymbol function) {
+            if (functions.TryGetValue(template, out function!))
+                return true;
+            else if (ParentScope is not null)
+                return ParentScope.TryLookupFunction(template, out function);
+
+            function = new(template, null!);
+            return false;
+        }
+
+        public bool TryRegisterVariable(BoundType type, BoundFunctionTemplate template) {
+            if (functions.ContainsKey(template))
+                return false;
+
+            functions[template] = new(template, type);
             return true;
         }
 

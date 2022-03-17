@@ -109,5 +109,10 @@
         /// Indexer operator does not exist
         /// </summary>
         LMB0022,
+
+        /// <summary>
+        /// Function does not exist
+        /// </summary>
+        LMB0023,
     }
 }

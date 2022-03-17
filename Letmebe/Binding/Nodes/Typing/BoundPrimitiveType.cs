@@ -1,7 +1,7 @@
 ﻿namespace Letmebe.Binding.Nodes {
     internal class BoundPrimitiveType : BoundType {
         public enum PrimitiveType {
-            Integer, Float, Boolean, String, Character, Object, Type,
+            Integer, Float, Boolean, String, Character, Object, Type, Void,
         }
 
         public static readonly BoundPrimitiveType IntegerPrimitive      = new(PrimitiveType.Integer);
@@ -11,6 +11,7 @@
         public static readonly BoundPrimitiveType CharacterPrimitive    = new(PrimitiveType.Character);
         public static readonly BoundPrimitiveType ObjectPrimitive       = new(PrimitiveType.Object);
         public static readonly BoundPrimitiveType TypePrimitive         = new(PrimitiveType.Type);
+        public static readonly BoundPrimitiveType VoidPrimitive         = new(PrimitiveType.Void);
 
         public readonly PrimitiveType Type;
 

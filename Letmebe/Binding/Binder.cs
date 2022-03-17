@@ -165,6 +165,22 @@ namespace Letmebe.Binding {
                     BoundIndexerOperator unknownOperator = new(boundExpression.Type!, new[] { boundIndexExpression.Type! }, null!);
                     return new BoundIndexingExpression(boundExpression, boundIndexExpression, unknownOperator);
                 }
+
+                case FunctionCallExpression functionCallExpression: {
+                    var boundWords = functionCallExpression.Words.Select<FunctionCallWord, BoundFunctionWord>(word => {
+                        if (word is FunctionCallIdentifier identifierWord)
+                            return new BoundFunctionIdentifierWord(identifierWord.Variable.IdentifierToken.Str);
+                        else
+                            return new BoundFunctionParameterWord(BindExpression((word as FunctionCallParameter)!.ParameterExpression).Type);
+                    }).ToArray();
+
+                    var template = new BoundFunctionTemplate(boundWords);
+
+                    if (!scope.TryLookupFunction(template, out var _))
+                        Diagnostics.Add(Reports.UndefinedFunction(template));
+
+                    return null!;
+                }
             }
 
             throw new Exception($"Unimplemented expression binding for type {expr.GetType()}");

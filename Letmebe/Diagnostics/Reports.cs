@@ -91,5 +91,9 @@ namespace Letmebe.Diagnostics {
         internal static Diagnostic UndefinedIndexerOperator(BoundType indexedType, BoundType indexerType) {
             return new($"Indexer operator {indexedType}[{indexerType}] does not exist", DiagnosticCode.LMB0022);
         }
+
+        internal static Diagnostic UndefinedFunction(BoundFunctionTemplate template) {
+            return new($"Function with signature '{template}' does not exist in current scope", DiagnosticCode.LMB0023);
+        }
     }
 }
