@@ -167,19 +167,22 @@ namespace Letmebe.Binding {
                 }
 
                 case FunctionCallExpression functionCallExpression: {
+                    List<BoundExpression> parameters = new();
                     var boundWords = functionCallExpression.Words.Select<FunctionCallWord, BoundFunctionWord>(word => {
                         if (word is FunctionCallIdentifier identifierWord)
                             return new BoundFunctionIdentifierWord(identifierWord.Variable.IdentifierToken.Str);
-                        else
-                            return new BoundFunctionParameterWord(BindExpression((word as FunctionCallParameter)!.ParameterExpression).Type);
+                        else {
+                            var boundParameter = BindExpression((word as FunctionCallParameter)!.ParameterExpression);
+                            return new BoundFunctionParameterWord(boundParameter.Type);
+                        }
                     }).ToArray();
 
                     var template = new BoundFunctionTemplate(boundWords);
 
-                    if (!scope.TryLookupFunction(template, out var _))
+                    if (!scope.TryLookupFunction(template, out var function))
                         Diagnostics.Add(Reports.UndefinedFunction(template));
 
-                    return null!;
+                    return new BoundFunctionCall(function, parameters.ToArray());
                 }
             }
 
