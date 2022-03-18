@@ -40,11 +40,13 @@ namespace Letmebe.Binding {
             return false;
         }
 
-        public bool TryRegisterVariable(BoundType type, string name) {
-            if (variables.ContainsKey(name))
+        public bool TryRegisterVariable(BoundType type, string name, out BoundSymbol symbol) {
+            if (variables.ContainsKey(name)) {
+                symbol = variables[name];
                 return false;
+            }
 
-            variables[name] = new(type, name);
+            variables[name] = symbol = new(type, name);
             return true;
         }
 
@@ -58,7 +60,7 @@ namespace Letmebe.Binding {
             return false;
         }
 
-        public bool TryRegisterVariable(BoundType type, BoundFunctionTemplate template) {
+        public bool TryRegisterFunction(BoundType type, BoundFunctionTemplate template) {
             if (functions.ContainsKey(template))
                 return false;
 

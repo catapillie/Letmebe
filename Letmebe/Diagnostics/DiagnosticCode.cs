@@ -114,5 +114,10 @@
         /// Function does not exist
         /// </summary>
         LMB0023,
+
+        /// <summary>
+        /// Variable already exists
+        /// </summary>
+        LMB0024,
     }
 }

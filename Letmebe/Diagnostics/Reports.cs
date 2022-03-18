@@ -95,5 +95,13 @@ namespace Letmebe.Diagnostics {
         internal static Diagnostic UndefinedFunction(BoundFunctionTemplate template) {
             return new($"Function with signature '{template}' does not exist in current scope", DiagnosticCode.LMB0023);
         }
+
+        internal static Diagnostic ExpressionStatementMustBeFunctionCall() {
+            return new($"An expression can only be a statement if it is a function call", DiagnosticCode.LMB0023);
+        }
+
+        internal static Diagnostic VariableAlreadyExists(BoundSymbol symbol) {
+            return new($"A variable named '{symbol.Name}' already exists in current scope", DiagnosticCode.LMB0024);
+        }
     }
 }

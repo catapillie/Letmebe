@@ -13,17 +13,53 @@ namespace Letmebe.Binding {
             Diagnostics = diagnostics;
         }
 
-        public BoundNode Bind(SyntaxNode root) {
-            return root switch {
-                Expression expression => BindExpression(expression),
-                Statement statement => BindStatement(statement),
-                _ => null!,
-            };
+        public BoundProgram Bind(ProgramNode program) {
+            return new BoundProgram(BindStatementArray(program.Statements));
         }
 
-        private BoundStatement BindStatement(Statement statement) {
+        private BoundStatement[] BindStatementArray(Statement[] statements)
+            => statements.Select(s => BindStatement(s))
+                         .Where(s => s is not null)
+                         .ToArray();
 
-            throw new Exception("Given Statement was not a type expression");
+        private BoundStatement BindStatement(Statement statement) {
+            switch (statement) {
+                case BlockStatement blockStatement: {
+                    ++scope;
+                    var boundBlock = new BoundBlockStatement(BindStatementArray(blockStatement.Statements));
+                    --scope;
+
+                    return boundBlock;
+                }
+
+                case ExpressionStatament expressionStatament: {
+                    var boundExpr = BindExpression(expressionStatament.Expression);
+                    if (boundExpr is not BoundFunctionCall)
+                        Diagnostics.Add(Reports.ExpressionStatementMustBeFunctionCall());
+
+                    return new BoundExpressionStatement(boundExpr);
+                }
+
+                case ForeverStatement foreverStatement: {
+                    return new BoundForeverStatement(BindStatement(foreverStatement.Statement));
+                }
+
+                case VariableDeclarationStatement variableDeclarationStatement: {
+                    var name = variableDeclarationStatement.Identifier.Str;
+                    var type = BindTypeExpression(variableDeclarationStatement.TypeExpression);
+                    var value = BindExpression(variableDeclarationStatement.Expression);
+
+                    if (!scope.TryRegisterVariable(type, name, out var symbol))
+                        Diagnostics.Add(Reports.VariableAlreadyExists(symbol));
+
+                    return new BoundVariableDefinitionStatement(symbol, value);
+                }
+
+                case EmptyStatement:
+                    return null!;
+            }
+
+            throw new Exception($"Unimplemented statement binding for type {statement.GetType()}");
         }
 
         private BoundType BindTypeExpression(TypeExpression typeExpr) {
@@ -75,7 +111,7 @@ namespace Letmebe.Binding {
                 }
             }
 
-            throw new Exception($"Unimplemented type_expression binding for type {typeExpr.GetType()}");
+            throw new Exception($"Unimplemented type expression binding for type {typeExpr.GetType()}");
         }
 
         private BoundExpression BindExpression(Expression expr) {

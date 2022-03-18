@@ -42,15 +42,10 @@ namespace Letmebe.Parsing {
             return false;
         }
 
-        public SyntaxNode Parse() {
-            //var node = ParseProgram();
-            //var node = ParseStatement(out _, allowBlocks: false);
-            //var node = ParseTypeExpression();
-            var node = ParseExpression();
-            return node;
-        }
+        public ProgramNode Parse()
+            => ParseProgram();
 
-        private Nodes.ProgramNode ParseProgram() {
+        private ProgramNode ParseProgram() {
             List<Statement> statements = new();
             while (true) {
                 var statement = ParseStatement(out bool fail, allowBlocks: false);
