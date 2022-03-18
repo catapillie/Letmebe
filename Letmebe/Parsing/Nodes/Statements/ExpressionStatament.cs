@@ -6,9 +6,13 @@ namespace Letmebe.Parsing.Nodes {
         public readonly Expression Expression;
         public readonly Token SemicolonToken;
 
+        public readonly bool IsInvalid;
+
         public ExpressionStatament(Expression expression, Token semicolonToken) {
             Expression = expression;
             SemicolonToken = semicolonToken;
+
+            IsInvalid = expression is not FunctionCallExpression;
         }
 
         public override IEnumerable Children() {

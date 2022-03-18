@@ -116,7 +116,7 @@ namespace Letmebe.Parsing {
             return new PrimaryTypeExpression(identifier);
         }
 
-        private Statement ParseStatement(out bool failure, bool allowBlocks = true) {
+        private Statement ParseStatement(out bool failure, bool allowBlocks = true, bool parseExpressions = true) {
             failure = false;
 
             if (TryMatch(TokenKind.DOTDOTDOT, out var emptyToken))
@@ -155,7 +155,7 @@ namespace Letmebe.Parsing {
             if (WillMatch(TokenKind.RETURN))
                 return ParseReturnStatement();
 
-            if (lookahead.Kind.IsBeginningOfExpression())
+            if (parseExpressions && lookahead.Kind.IsBeginningOfExpression())
                 return new ExpressionStatament(ParseExpression(), Match(TokenKind.SEMICOLON));
 
             failure = true;
@@ -291,11 +291,13 @@ namespace Letmebe.Parsing {
             var typeExpression = ParseTypeExpression();
 
             if (sentence.IsIdentifier) {
-                var body = ParseStatement(out bool fail);
+                Expression expression = null!;
+
+                var body = ParseStatement(out bool fail, parseExpressions: false);
                 if (!fail)
                     return new FunctionDefinitionStatement(letToken, sentence, beToken, typeExpression, body);
 
-                var expression = ParseExpression();
+                expression ??= ParseExpression();
                 var semicolonToken = Match(TokenKind.SEMICOLON);
                 return new VariableDeclarationStatement(letToken, (Token)sentence, beToken, typeExpression, expression, semicolonToken);
             } else {

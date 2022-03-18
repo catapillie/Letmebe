@@ -33,10 +33,10 @@ namespace Letmebe.Binding {
                 }
 
                 case ExpressionStatament expressionStatament: {
-                    var boundExpr = BindExpression(expressionStatament.Expression);
-                    if (boundExpr is not BoundFunctionCall)
+                    if (expressionStatament.IsInvalid)
                         Diagnostics.Add(Reports.ExpressionStatementMustBeFunctionCall());
 
+                    var boundExpr = BindExpression(expressionStatament.Expression);
                     return new BoundExpressionStatement(boundExpr);
                 }
 
