@@ -119,5 +119,10 @@
         /// Variable already exists
         /// </summary>
         LMB0024,
+
+        /// <summary>
+        /// Repeat-times amount must be integer
+        /// </summary>
+        LMB0025,
     }
 }

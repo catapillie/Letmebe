@@ -97,11 +97,15 @@ namespace Letmebe.Diagnostics {
         }
 
         internal static Diagnostic ExpressionStatementMustBeFunctionCall() {
-            return new($"An expression can only be a statement if it is a function call", DiagnosticCode.LMB0023);
+            return new("An expression can only be a statement if it is a function call", DiagnosticCode.LMB0023);
         }
 
         internal static Diagnostic VariableAlreadyExists(BoundSymbol symbol) {
             return new($"A variable named '{symbol.Name}' already exists in current scope", DiagnosticCode.LMB0024);
+        }
+
+        internal static Diagnostic RepeatTimesAmountMustBeInteger() {
+            return new("Repeat-times amount expression must be an integer", DiagnosticCode.LMB0025);
         }
     }
 }

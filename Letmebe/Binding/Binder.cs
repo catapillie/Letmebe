@@ -44,6 +44,16 @@ namespace Letmebe.Binding {
                     return new BoundForeverStatement(BindStatement(foreverStatement.Statement));
                 }
 
+                case RepeatTimesStatement repeatTimesStatement: {
+                    var boundAmount = BindExpression(repeatTimesStatement.Amount);
+                    var boundStatement = BindStatement(repeatTimesStatement.Statement);
+
+                    if (boundAmount.Type is not null && boundAmount.Type != BoundPrimitiveType.IntegerPrimitive)
+                        Diagnostics.Add(Reports.RepeatTimesAmountMustBeInteger());
+
+                    return new BoundRepeatTimesStatement(boundAmount, boundStatement);
+                }
+
                 case VariableDeclarationStatement variableDeclarationStatement: {
                     var name = variableDeclarationStatement.Identifier.Str;
                     var type = BindTypeExpression(variableDeclarationStatement.TypeExpression);
