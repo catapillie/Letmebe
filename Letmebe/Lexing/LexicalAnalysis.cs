@@ -35,7 +35,7 @@ namespace Letmebe.Lexing {
 
             (TokenKind.DECIMAL, new Regex(@"^\d*\.?\d+f", RegexOptions.Compiled), s => float.Parse(s[0..^1], CultureInfo.InvariantCulture.NumberFormat)),
             (TokenKind.INTEGER, new Regex(@"^\d+", RegexOptions.Compiled), s => int.Parse(s)),
-            (TokenKind.STRING, new Regex(@"^""[^""\n]*""", RegexOptions.Compiled), s => s),
+            (TokenKind.STRING, new Regex(@"^""[^""\n]*""", RegexOptions.Compiled), s => s[1..^1]),
             (TokenKind.CHARACTER, new Regex(@"^'[^\n]'", RegexOptions.Compiled), s => s[1]),
             (TokenKind.IDENTIFIER, new Regex(@"^\w+'*", RegexOptions.Compiled), null!),
 
