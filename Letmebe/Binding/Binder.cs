@@ -36,7 +36,7 @@ namespace Letmebe.Binding {
                     var boundCondition = BindExpression(ifStatement.Condition);
                     var boundStatement = BindStatement(ifStatement.ThenStatement);
 
-                    if (boundCondition.Type is not null && boundCondition.Type != BoundPrimitiveType.BooleanPrimitive)
+                    if (boundCondition.Type.IsKnown && boundCondition.Type != BoundPrimitiveType.BooleanPrimitive)
                         Diagnostics.Add(Reports.IfConditionMustBeBoolean());
 
                     return new BoundIfStatement(boundCondition, boundStatement);
@@ -46,7 +46,7 @@ namespace Letmebe.Binding {
                     var boundCondition = BindExpression(unlessStatement.Condition);
                     var boundStatement = BindStatement(unlessStatement.ThenStatement);
 
-                    if (boundCondition.Type is not null && boundCondition.Type != BoundPrimitiveType.BooleanPrimitive)
+                    if (boundCondition.Type.IsKnown && boundCondition.Type != BoundPrimitiveType.BooleanPrimitive)
                         Diagnostics.Add(Reports.IfConditionMustBeBoolean());
 
                     return new BoundIfStatement(boundCondition, boundStatement);
@@ -57,7 +57,7 @@ namespace Letmebe.Binding {
                     var boundStatement = BindStatement(ifOtherwiseStatement.ThenStatement);
                     var boundOtherwiseStatement = BindStatement(ifOtherwiseStatement.OtherwiseStatement);
                     
-                    if (boundCondition.Type is not null && boundCondition.Type != BoundPrimitiveType.BooleanPrimitive)
+                    if (boundCondition.Type.IsKnown && boundCondition.Type != BoundPrimitiveType.BooleanPrimitive)
                         Diagnostics.Add(Reports.IfOtherwiseConditionMustBeBoolean());
 
                     return new BoundIfOtherwiseStatement(boundCondition, boundStatement, boundOtherwiseStatement);
@@ -67,7 +67,7 @@ namespace Letmebe.Binding {
                     var boundCondition = BindExpression(whileStatement.Condition);
                     var boundStatement = BindStatement(whileStatement.Statement);
 
-                    if (boundCondition.Type is not null && boundCondition.Type != BoundPrimitiveType.BooleanPrimitive)
+                    if (boundCondition.Type.IsKnown && boundCondition.Type != BoundPrimitiveType.BooleanPrimitive)
                         Diagnostics.Add(Reports.WhileConditionMustBeBoolean());
 
                     return new BoundWhileStatement(boundCondition, boundStatement);
@@ -77,7 +77,7 @@ namespace Letmebe.Binding {
                     var boundCondition = BindExpression(untilStatement.Condition);
                     var boundStatement = BindStatement(untilStatement.Statement);
 
-                    if (boundCondition.Type is not null && boundCondition.Type != BoundPrimitiveType.BooleanPrimitive)
+                    if (boundCondition.Type.IsKnown && boundCondition.Type != BoundPrimitiveType.BooleanPrimitive)
                         Diagnostics.Add(Reports.UntilConditionMustBeBoolean());
 
                     return new BoundUntilStatement(boundCondition, boundStatement);
@@ -91,7 +91,7 @@ namespace Letmebe.Binding {
                     var boundStatement = BindStatement(doWhile.Statement);
                     var boundCondition = BindExpression(doWhile.Condition);
 
-                    if (boundCondition.Type is not null && boundCondition.Type != BoundPrimitiveType.BooleanPrimitive)
+                    if (boundCondition.Type.IsKnown && boundCondition.Type != BoundPrimitiveType.BooleanPrimitive)
                         Diagnostics.Add(Reports.DoWhileConditionMustBeBoolean());
 
                     return new BoundDoWhiteStatement(boundStatement, boundCondition);
@@ -101,18 +101,10 @@ namespace Letmebe.Binding {
                     var boundStatement = BindStatement(doUntil.Statement);
                     var boundCondition = BindExpression(doUntil.Condition);
 
-                    if (boundCondition.Type is not null && boundCondition.Type != BoundPrimitiveType.BooleanPrimitive)
+                    if (boundCondition.Type.IsKnown && boundCondition.Type != BoundPrimitiveType.BooleanPrimitive)
                         Diagnostics.Add(Reports.DoUntilConditionMustBeBoolean());
 
                     return new BoundDoUntilStatement(boundStatement, boundCondition);
-                }
-
-                case ExpressionStatement expressionStatement: {
-                    if (expressionStatement.IsInvalid)
-                        Diagnostics.Add(Reports.ExpressionStatementMustBeFunctionCall());
-
-                    var boundExpr = BindExpression(expressionStatement.Expression);
-                    return new BoundExpressionStatement(boundExpr);
                 }
 
                 case ForeverStatement foreverStatement: {
@@ -123,10 +115,18 @@ namespace Letmebe.Binding {
                     var boundAmount = BindExpression(repeatTimesStatement.Amount);
                     var boundStatement = BindStatement(repeatTimesStatement.Statement);
 
-                    if (boundAmount.Type is not null && boundAmount.Type != BoundPrimitiveType.IntegerPrimitive)
+                    if (boundAmount.Type.IsKnown && boundAmount.Type != BoundPrimitiveType.IntegerPrimitive)
                         Diagnostics.Add(Reports.RepeatTimesAmountMustBeInteger());
 
                     return new BoundRepeatTimesStatement(boundAmount, boundStatement);
+                }
+
+                case ExpressionStatement expressionStatement: {
+                    if (expressionStatement.IsInvalid)
+                        Diagnostics.Add(Reports.ExpressionStatementMustBeFunctionCall());
+
+                    var boundExpr = BindExpression(expressionStatement.Expression);
+                    return new BoundExpressionStatement(boundExpr);
                 }
 
                 case VariableDeclarationStatement variableDeclarationStatement: {
@@ -244,10 +244,10 @@ namespace Letmebe.Binding {
                             return new BoundBinaryOperation(boundLeft, op, boundRight);
                     }
 
-                    if (boundLeft.Type is not null && boundRight.Type is not null)
+                    if (boundLeft.Type.IsKnown && boundRight.Type.IsKnown)
                         Diagnostics.Add(Reports.UndefinedBinaryOperator(opToken, boundLeft.Type, boundRight.Type));
 
-                    BoundBinaryOperator unknownOperator = new(opToken, boundLeft.Type!, boundRight.Type!, null!);
+                    BoundBinaryOperator unknownOperator = new(opToken, boundLeft.Type, boundRight.Type, BoundType.Unknown);
                     return new BoundBinaryOperation(boundLeft, unknownOperator, boundRight);
                 }
 
@@ -260,10 +260,10 @@ namespace Letmebe.Binding {
                             return new BoundUnaryOperation(boundOperand, op);
                     }
 
-                    if (boundOperand.Type is not null)
+                    if (boundOperand.Type.IsKnown)
                         Diagnostics.Add(Reports.UndefinedUnaryOperator(opToken, boundOperand.Type));
 
-                    BoundUnaryOperator unknownOperator = new(opToken, boundOperand.Type!, null!);
+                    BoundUnaryOperator unknownOperator = new(opToken, boundOperand.Type, BoundType.Unknown);
                     return new BoundUnaryOperation(boundOperand, unknownOperator);
                 }
 
@@ -280,27 +280,30 @@ namespace Letmebe.Binding {
                             return new BoundIndexingExpression(boundExpression, boundIndexExpression, op);
                     }
 
-                    if (boundExpression.Type is not null && boundIndexExpression.Type is not null)
+                    if (boundExpression.Type.IsKnown && boundIndexExpression.Type.IsKnown)
                         Diagnostics.Add(Reports.UndefinedIndexerOperator(boundExpression.Type, boundIndexExpression.Type));
 
-                    BoundIndexerOperator unknownOperator = new(boundExpression.Type!, new[] { boundIndexExpression.Type! }, null!);
+                    BoundIndexerOperator unknownOperator = new(boundExpression.Type, new[] { boundIndexExpression.Type }, BoundType.Unknown);
                     return new BoundIndexingExpression(boundExpression, boundIndexExpression, unknownOperator);
                 }
 
                 case FunctionCallExpression functionCallExpression: {
                     List<BoundExpression> parameters = new();
+                    bool allTypesKnown = true;
+
                     var boundWords = functionCallExpression.Words.Select<FunctionCallWord, BoundFunctionWord>(word => {
                         if (word is FunctionCallIdentifier identifierWord)
                             return new BoundFunctionIdentifierWord(identifierWord.Variable.IdentifierToken.Str);
                         else {
                             var boundParameter = BindExpression(((FunctionCallParameter)word).ParameterExpression);
+                            allTypesKnown &= boundParameter.Type.IsKnown;
                             return new BoundFunctionParameterWord(boundParameter.Type);
                         }
                     }).ToArray();
 
                     var template = new BoundFunctionTemplate(boundWords);
 
-                    if (!scope.TryLookupFunction(template, out var function))
+                    if (allTypesKnown & !scope.TryLookupFunction(template, out var function))
                         Diagnostics.Add(Reports.UndefinedFunction(template));
 
                     return new BoundFunctionCall(function, parameters.ToArray());
