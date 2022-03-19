@@ -107,5 +107,13 @@ namespace Letmebe.Diagnostics {
         internal static Diagnostic RepeatTimesAmountMustBeInteger() {
             return new("Repeat-times amount expression must be an integer", DiagnosticCode.LMB0025);
         }
+
+        internal static Diagnostic DoWhileConditionMustBeBoolean() {
+            return new("Do-while condition expression must be a boolean", DiagnosticCode.LMB0026);
+        }
+
+        internal static Diagnostic DoUntilConditionMustBeBoolean() {
+            return new("Do-until condition expression must be a boolean", DiagnosticCode.LMB0027);
+        }
     }
 }

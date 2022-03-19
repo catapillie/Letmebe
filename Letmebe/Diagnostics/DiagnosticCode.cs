@@ -124,5 +124,15 @@
         /// Repeat-times amount must be integer
         /// </summary>
         LMB0025,
+
+        /// <summary>
+        /// Do-while condition must be boolean
+        /// </summary>
+        LMB0026,
+
+        /// <summary>
+        /// Do-until condition must be boolean
+        /// </summary>
+        LMB0027,
     }
 }

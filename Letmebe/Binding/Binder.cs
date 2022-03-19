@@ -32,6 +32,30 @@ namespace Letmebe.Binding {
                     return boundBlock;
                 }
 
+                case DoStatement doStatement: {
+                    return new BoundDoStatement(BindStatement(doStatement.Statement));
+                }
+
+                case DoWhileStatement doWhile: {
+                    var boundStatement = BindStatement(doWhile.Statement);
+                    var boundCondition = BindExpression(doWhile.Condition);
+
+                    if (boundCondition.Type is not null && boundCondition.Type != BoundPrimitiveType.BooleanPrimitive)
+                        Diagnostics.Add(Reports.DoWhileConditionMustBeBoolean());
+
+                    return new BoundDoWhiteStatement(boundStatement, boundCondition);
+                }
+
+                case DoUntilStatement doUntil: {
+                    var boundStatement = BindStatement(doUntil.Statement);
+                    var boundCondition = BindExpression(doUntil.Condition);
+
+                    if (boundCondition.Type is not null && boundCondition.Type != BoundPrimitiveType.BooleanPrimitive)
+                        Diagnostics.Add(Reports.DoUntilConditionMustBeBoolean());
+
+                    return new BoundDoUntilStatement(boundStatement, boundCondition);
+                }
+
                 case ExpressionStatament expressionStatament: {
                     if (expressionStatament.IsInvalid)
                         Diagnostics.Add(Reports.ExpressionStatementMustBeFunctionCall());
@@ -218,7 +242,7 @@ namespace Letmebe.Binding {
                         if (word is FunctionCallIdentifier identifierWord)
                             return new BoundFunctionIdentifierWord(identifierWord.Variable.IdentifierToken.Str);
                         else {
-                            var boundParameter = BindExpression((word as FunctionCallParameter)!.ParameterExpression);
+                            var boundParameter = BindExpression(((FunctionCallParameter)word).ParameterExpression);
                             return new BoundFunctionParameterWord(boundParameter.Type);
                         }
                     }).ToArray();
