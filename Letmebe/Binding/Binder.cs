@@ -32,6 +32,47 @@ namespace Letmebe.Binding {
                     return boundBlock;
                 }
 
+                case IfStatement ifStatement: {
+                    var boundCondition = BindExpression(ifStatement.Condition);
+                    var boundStatement = BindStatement(ifStatement.ThenStatement);
+
+                    if (boundCondition.Type is not null && boundCondition.Type != BoundPrimitiveType.BooleanPrimitive)
+                        Diagnostics.Add(Reports.IfConditionMustBeBoolean());
+
+                    return new BoundIfStatement(boundCondition, boundStatement);
+                }
+
+                case IfOtherwiseStatement ifOtherwiseStatement: {
+                    var boundCondition = BindExpression(ifOtherwiseStatement.Condition);
+                    var boundStatement = BindStatement(ifOtherwiseStatement.ThenStatement);
+                    var boundOtherwiseStatement = BindStatement(ifOtherwiseStatement.OtherwiseStatement);
+
+                    if (boundCondition.Type is not null && boundCondition.Type != BoundPrimitiveType.BooleanPrimitive)
+                        Diagnostics.Add(Reports.IfOtherwiseConditionMustBeBoolean());
+
+                    return new BoundIfOtherwiseStatement(boundCondition, boundStatement, boundOtherwiseStatement);
+                }
+
+                case WhileStatement whileStatement: {
+                    var boundCondition = BindExpression(whileStatement.Condition);
+                    var boundStatement = BindStatement(whileStatement.Statement);
+
+                    if (boundCondition.Type is not null && boundCondition.Type != BoundPrimitiveType.BooleanPrimitive)
+                        Diagnostics.Add(Reports.WhileConditionMustBeBoolean());
+
+                    return new BoundWhileStatement(boundCondition, boundStatement);
+                }
+
+                case UntilStatement untilStatement: {
+                    var boundCondition = BindExpression(untilStatement.Condition);
+                    var boundStatement = BindStatement(untilStatement.Statement);
+
+                    if (boundCondition.Type is not null && boundCondition.Type != BoundPrimitiveType.BooleanPrimitive)
+                        Diagnostics.Add(Reports.UntilConditionMustBeBoolean());
+
+                    return new BoundUntilStatement(boundCondition, boundStatement);
+                }
+
                 case DoStatement doStatement: {
                     return new BoundDoStatement(BindStatement(doStatement.Statement));
                 }

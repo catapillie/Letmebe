@@ -134,5 +134,25 @@
         /// Do-until condition must be boolean
         /// </summary>
         LMB0027,
+
+        /// <summary>
+        /// If condition must be boolean
+        /// </summary>
+        LMB0028,
+
+        /// <summary>
+        /// If-otherwise condition must be boolean
+        /// </summary>
+        LMB0029,
+
+        /// <summary>
+        /// While condition must be boolean
+        /// </summary>
+        LMB0030,
+
+        /// <summary>
+        /// Until condition must be boolean
+        /// </summary>
+        LMB0031,
     }
 }

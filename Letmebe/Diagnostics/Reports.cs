@@ -115,5 +115,21 @@ namespace Letmebe.Diagnostics {
         internal static Diagnostic DoUntilConditionMustBeBoolean() {
             return new("Do-until condition expression must be a boolean", DiagnosticCode.LMB0027);
         }
+
+        internal static Diagnostic IfConditionMustBeBoolean() {
+            return new("If condition expression must be a boolean", DiagnosticCode.LMB0028);
+        }
+
+        internal static Diagnostic IfOtherwiseConditionMustBeBoolean() {
+            return new("If-otherwise condition expression must be a boolean", DiagnosticCode.LMB0029);
+        }
+
+        internal static Diagnostic WhileConditionMustBeBoolean() {
+            return new("While condition expression must be a boolean", DiagnosticCode.LMB0030);
+        }
+
+        internal static Diagnostic UntilConditionMustBeBoolean() {
+            return new("Until condition expression must be a boolean", DiagnosticCode.LMB0031);
+        }
     }
 }
