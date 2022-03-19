@@ -328,7 +328,7 @@ namespace Letmebe.Parsing {
                 if (TryMatch(TokenKind.IDENTIFIER, out var identifierToken))
                     word = new DefinitionIdentifierWord(identifierToken);
 
-                if (TryMatch(TokenKind.LEFTCHEVRON, out var leftChevronToken)) {
+                else if (TryMatch(TokenKind.LEFTCHEVRON, out var leftChevronToken)) {
                     List<(TypeExpression, Token)> parameters = new();
                     do {
                         var typeExpression = ParseTypeExpression();
