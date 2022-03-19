@@ -41,17 +41,16 @@ namespace Letmebe.Binding {
         }
 
         public bool TryRegisterVariable(BoundType type, string name, out BoundSymbol symbol) {
-            if (variables.ContainsKey(name)) {
-                symbol = variables[name];
+            if (variables.TryGetValue(name, out symbol!))
                 return false;
-            }
 
             variables[name] = symbol = new(type, name);
             return true;
         }
 
         public bool TryLookupFunction(BoundFunctionTemplate template, out BoundFunctionSymbol function) {
-            if (functions.TryGetValue(template, out function!))
+            function = functions.Where(pair => pair.Key.Equals(template)).FirstOrDefault().Value;
+            if (function is not null)
                 return true;
             else if (ParentScope is not null)
                 return ParentScope.TryLookupFunction(template, out function);
@@ -60,11 +59,12 @@ namespace Letmebe.Binding {
             return false;
         }
 
-        public bool TryRegisterFunction(BoundType type, BoundFunctionTemplate template) {
-            if (functions.ContainsKey(template))
+        public bool TryRegisterFunction(BoundType type, BoundFunctionTemplate template, out BoundFunctionSymbol symbol) {
+            symbol = functions.Where(pair => pair.Key.Equals(template)).FirstOrDefault().Value;
+            if (symbol is not null)
                 return false;
 
-            functions[template] = new(template, type);
+            functions[template] = symbol = new(template, type);
             return true;
         }
 

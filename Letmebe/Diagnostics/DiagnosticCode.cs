@@ -159,5 +159,20 @@
         /// Until condition must be boolean
         /// </summary>
         LMB0032,
+
+        /// <summary>
+        /// Function signature must have identifier
+        /// </summary>
+        LMB0033,
+
+        /// <summary>
+        /// Function parameter already declared
+        /// </summary>
+        LMB0034,
+
+        /// <summary>
+        /// Function already defined in current scope
+        /// </summary>
+        LMB0035,
     }
 }

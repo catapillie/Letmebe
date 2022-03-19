@@ -135,5 +135,17 @@ namespace Letmebe.Diagnostics {
         internal static Diagnostic UntilConditionMustBeBoolean() {
             return new("Until condition expression must be a boolean", DiagnosticCode.LMB0032);
         }
+
+        internal static Diagnostic FunctionSignatureMustHaveIdentifier() {
+            return new("A newly defined function's signature must have at least one identifier", DiagnosticCode.LMB0033);
+        }
+
+        internal static Diagnostic FunctionParameterAlreadyDeclared(BoundSymbol symbol) {
+            return new($"A parameter named '{symbol.Name}' ({symbol.Type}) was already declared in this function definition", DiagnosticCode.LMB0034);
+        }
+
+        internal static Diagnostic FunctionAlreadyDefined(BoundFunctionSymbol functionSymbol) {
+            return new($"A function with signature '{functionSymbol}' already exists in current scope", DiagnosticCode.LMB0035);
+        }
     }
 }

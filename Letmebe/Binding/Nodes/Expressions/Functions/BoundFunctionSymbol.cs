@@ -7,5 +7,8 @@
             Template = template;
             ReturnType = returnType;
         }
+
+        public override string ToString()
+            => $"{Template} -> {ReturnType}";
     }
 }

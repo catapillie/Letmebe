@@ -7,19 +7,15 @@ namespace Letmebe.Parsing.Nodes {
         public readonly Expression? Expression;
         public readonly Token SemicolonToken;
 
-        public readonly bool HasExpression;
-
         public ReturnStatement(Token returnToken, Expression expression, Token semicolonToken) {
             ReturnToken = returnToken;
             Expression = expression;
             SemicolonToken = semicolonToken;
-            HasExpression = true;
         }
 
         public ReturnStatement(Token returnToken, Token semicolonToken) {
             ReturnToken = returnToken;
             SemicolonToken = semicolonToken;
-            HasExpression = false;
         }
 
         public override IEnumerable Children() {

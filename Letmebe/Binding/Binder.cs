@@ -140,6 +140,126 @@ namespace Letmebe.Binding {
                     return new BoundVariableDefinitionStatement(symbol, value);
                 }
 
+                case FunctionDefinitionStatement s: {
+                    BoundStatement boundBody;
+                    List<(BoundType Type, string Name)> declaredParameters = new();
+
+                    BoundFunctionTemplate template;
+
+                    if (s.Sentence.Words.Length > 0) {
+                        List<BoundFunctionWord> words = new();
+
+                        bool hasIdentifiers = false;
+                        foreach (var w in s.Sentence.Words) {
+
+                            if (w is DefinitionParameterListWord paramList) {
+                                foreach (var param in paramList.Parameters) {
+                                    var boundType = BindTypeExpression(param.TypeExpression);
+                                    string name = param.IdentifierToken.Str;
+
+                                    declaredParameters.Add((boundType, name));
+                                    words.Add(new BoundFunctionParameterWord(boundType));
+                                }
+                            } else {
+                                hasIdentifiers = true;
+                                string identifier = ((DefinitionIdentifierWord)w).IdentifierToken.Str;
+                                words.Add(new BoundFunctionIdentifierWord(identifier));
+                            }
+
+                        }
+
+                        template = new BoundFunctionTemplate(words.ToArray());
+
+                        if (!hasIdentifiers)
+                            Diagnostics.Add(Reports.FunctionSignatureMustHaveIdentifier());
+                    } else
+                        template = new BoundFunctionTemplate(Array.Empty<BoundFunctionWord>());
+
+                    var boundReturnType = BindTypeExpression(s.TypeExpression);
+                    if (!scope.TryRegisterFunction(boundReturnType, template, out var functionSymbol))
+                        Diagnostics.Add(Reports.FunctionAlreadyDefined(functionSymbol));
+
+                    ++scope; // This is placed before the arguments are declared, and after the function is registerd.
+
+                    foreach (var (type, name) in declaredParameters)
+                        if (!scope.TryRegisterVariable(type, name, out var symbol))
+                            Diagnostics.Add(Reports.FunctionParameterAlreadyDeclared(symbol));
+
+                    // BindStatement(BlockStatement) would advance the scope forward, making shadowing the function's parameters possible.
+                    // We don't want that, so let's bind it manually.
+                    if (s.Body is BlockStatement block)
+                        boundBody = new BoundBlockStatement(BindStatementArray(block.Statements));
+                    else
+                        boundBody = BindStatement(s.Body);
+
+                    --scope;
+
+                    return new BoundFunctionDefinitionStatement(functionSymbol, boundBody);
+                }
+
+                case VoidFunctionDefinitionStatement s: {
+                    BoundStatement boundBody;
+                    List<(BoundType Type, string Name)> declaredParameters = new();
+
+                    BoundFunctionTemplate template;
+
+                    if (s.Sentence.Words.Length > 0) {
+                        List<BoundFunctionWord> words = new();
+
+                        bool hasIdentifiers = false;
+                        foreach (var w in s.Sentence.Words) {
+
+                            if (w is DefinitionParameterListWord paramList) {
+                                foreach (var param in paramList.Parameters) {
+                                    var boundType = BindTypeExpression(param.TypeExpression);
+                                    string name = param.IdentifierToken.Str;
+
+                                    declaredParameters.Add((boundType, name));
+                                    words.Add(new BoundFunctionParameterWord(boundType));
+                                }
+                            } else {
+                                hasIdentifiers = true;
+                                string identifier = ((DefinitionIdentifierWord)w).IdentifierToken.Str;
+                                words.Add(new BoundFunctionIdentifierWord(identifier));
+                            }
+
+                        }
+
+                        template = new BoundFunctionTemplate(words.ToArray());
+
+                        if (!hasIdentifiers)
+                            Diagnostics.Add(Reports.FunctionSignatureMustHaveIdentifier());
+                    } else
+                        template = new BoundFunctionTemplate(Array.Empty<BoundFunctionWord>());
+
+                    if (!scope.TryRegisterFunction(BoundPrimitiveType.VoidPrimitive, template, out var functionSymbol))
+                        Diagnostics.Add(Reports.FunctionAlreadyDefined(functionSymbol));
+
+                    ++scope;
+
+                    foreach (var (type, name) in declaredParameters)
+                        if (!scope.TryRegisterVariable(type, name, out var symbol))
+                            Diagnostics.Add(Reports.FunctionParameterAlreadyDeclared(symbol));
+
+                    if (s.Body is BlockStatement block)
+                        boundBody = new BoundBlockStatement(BindStatementArray(block.Statements));
+                    else
+                        boundBody = BindStatement(s.Body);
+
+                    --scope;
+
+                    return new BoundFunctionDefinitionStatement(functionSymbol, boundBody);
+                }
+
+                case ReturnStatement s: {
+                    if (s.Expression is not null) {
+                        var boundExpression = BindExpression(s.Expression);
+                        return new BoundReturnStatement(boundExpression);
+                    }
+
+                    return new BoundVoidReturnStatement();
+                }
+
                 case EmptyStatement:
                     return null!;
             }
@@ -196,7 +316,7 @@ namespace Letmebe.Binding {
                 }
             }
 
-            throw new Exception($"Unimplemented type expression binding for type {typeExpr.GetType()}");
+            return BoundType.Unknown;
         }
 
         private BoundExpression BindExpression(Expression expr) {

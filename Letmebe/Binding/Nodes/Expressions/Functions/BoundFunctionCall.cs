@@ -13,7 +13,7 @@ namespace Letmebe.Binding.Nodes {
         }
 
         public override IEnumerable Children() {
-            yield return Function.Template + " -> " + (Function.ReturnType == null ? Function.ReturnType : "???");
+            yield return Function;
             foreach (var parameter in Parameters)
                 yield return parameter;
         }
