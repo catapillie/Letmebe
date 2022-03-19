@@ -2,7 +2,7 @@
 using System.Collections;
 
 namespace Letmebe.Parsing.Nodes {
-    internal class DoStatement : Statement {
+    internal sealed class DoStatement : Statement {
         public readonly Token DoToken;
         public readonly Statement Statement;
 

@@ -227,7 +227,7 @@ namespace Letmebe.Parsing {
             return new UntilStatement(untilToken, condition, then);
         }
 
-        private DoStatement ParseDoStatement() {
+        private Statement ParseDoStatement() {
             var doToken = Step();
             var statement = ParseStatement(out bool fail);
             if (fail) {
@@ -246,9 +246,8 @@ namespace Letmebe.Parsing {
                 return new DoUntilStatement(doToken, statement, untilToken, condition, semicolonToken);
             }
 
-            if (statement is not ExpressionStatament) {
+            if (statement is not ExpressionStatament)
                 Diagnostics.Add(Reports.ExpectedWhileOrUntilAfterDoStatement());
-            }
             return new DoStatement(doToken, statement);
         }
 
