@@ -141,18 +141,23 @@
         LMB0028,
 
         /// <summary>
-        /// If-otherwise condition must be boolean
+        /// Unless condition must be boolean
         /// </summary>
         LMB0029,
 
         /// <summary>
-        /// While condition must be boolean
+        /// If-otherwise condition must be boolean
         /// </summary>
         LMB0030,
 
         /// <summary>
-        /// Until condition must be boolean
+        /// While condition must be boolean
         /// </summary>
         LMB0031,
+
+        /// <summary>
+        /// Until condition must be boolean
+        /// </summary>
+        LMB0032,
     }
 }

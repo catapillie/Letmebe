@@ -42,11 +42,21 @@ namespace Letmebe.Binding {
                     return new BoundIfStatement(boundCondition, boundStatement);
                 }
 
+                case UnlessStatement unlessStatement: {
+                    var boundCondition = BindExpression(unlessStatement.Condition);
+                    var boundStatement = BindStatement(unlessStatement.ThenStatement);
+
+                    if (boundCondition.Type is not null && boundCondition.Type != BoundPrimitiveType.BooleanPrimitive)
+                        Diagnostics.Add(Reports.IfConditionMustBeBoolean());
+
+                    return new BoundIfStatement(boundCondition, boundStatement);
+                }
+
                 case IfOtherwiseStatement ifOtherwiseStatement: {
                     var boundCondition = BindExpression(ifOtherwiseStatement.Condition);
                     var boundStatement = BindStatement(ifOtherwiseStatement.ThenStatement);
                     var boundOtherwiseStatement = BindStatement(ifOtherwiseStatement.OtherwiseStatement);
-
+                    
                     if (boundCondition.Type is not null && boundCondition.Type != BoundPrimitiveType.BooleanPrimitive)
                         Diagnostics.Add(Reports.IfOtherwiseConditionMustBeBoolean());
 
