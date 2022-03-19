@@ -56,11 +56,11 @@ namespace Letmebe.Binding {
                     return new BoundDoUntilStatement(boundStatement, boundCondition);
                 }
 
-                case ExpressionStatament expressionStatament: {
-                    if (expressionStatament.IsInvalid)
+                case ExpressionStatement expressionStatement: {
+                    if (expressionStatement.IsInvalid)
                         Diagnostics.Add(Reports.ExpressionStatementMustBeFunctionCall());
 
-                    var boundExpr = BindExpression(expressionStatament.Expression);
+                    var boundExpr = BindExpression(expressionStatement.Expression);
                     return new BoundExpressionStatement(boundExpr);
                 }
 

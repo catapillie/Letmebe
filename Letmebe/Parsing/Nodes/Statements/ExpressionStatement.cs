@@ -2,13 +2,13 @@
 using System.Collections;
 
 namespace Letmebe.Parsing.Nodes {
-    internal sealed class ExpressionStatament : Statement {
+    internal sealed class ExpressionStatement : Statement {
         public readonly Expression Expression;
         public readonly Token SemicolonToken;
 
         public readonly bool IsInvalid;
 
-        public ExpressionStatament(Expression expression, Token semicolonToken) {
+        public ExpressionStatement(Expression expression, Token semicolonToken) {
             Expression = expression;
             SemicolonToken = semicolonToken;
 

@@ -156,7 +156,7 @@ namespace Letmebe.Parsing {
                 return ParseReturnStatement();
 
             if (parseExpressions && lookahead.Kind.IsBeginningOfExpression())
-                return new ExpressionStatament(ParseExpression(), Match(TokenKind.SEMICOLON));
+                return new ExpressionStatement(ParseExpression(), Match(TokenKind.SEMICOLON));
 
             failure = true;
             return new Statement();
@@ -246,7 +246,7 @@ namespace Letmebe.Parsing {
                 return new DoUntilStatement(doToken, statement, untilToken, condition, semicolonToken);
             }
 
-            if (statement is not ExpressionStatament)
+            if (statement is not ExpressionStatement)
                 Diagnostics.Add(Reports.ExpectedWhileOrUntilAfterDoStatement());
             return new DoStatement(doToken, statement);
         }
