@@ -24,17 +24,17 @@ namespace Letmebe.Binding {
 
         private BoundStatement BindStatement(Statement statement) {
             switch (statement) {
-                case BlockStatement blockStatement: {
+                case BlockStatement s: {
                     ++scope;
-                    var boundBlock = new BoundBlockStatement(BindStatementArray(blockStatement.Statements));
+                    var boundBlock = new BoundBlockStatement(BindStatementArray(s.Statements));
                     --scope;
 
                     return boundBlock;
                 }
 
-                case IfStatement ifStatement: {
-                    var boundCondition = BindExpression(ifStatement.Condition);
-                    var boundStatement = BindStatement(ifStatement.ThenStatement);
+                case IfStatement s: {
+                    var boundCondition = BindExpression(s.Condition);
+                    var boundStatement = BindStatement(s.ThenStatement);
 
                     if (boundCondition.Type.IsKnown && boundCondition.Type != BoundPrimitiveType.BooleanPrimitive)
                         Diagnostics.Add(Reports.IfConditionMustBeBoolean());
@@ -42,9 +42,9 @@ namespace Letmebe.Binding {
                     return new BoundIfStatement(boundCondition, boundStatement);
                 }
 
-                case UnlessStatement unlessStatement: {
-                    var boundCondition = BindExpression(unlessStatement.Condition);
-                    var boundStatement = BindStatement(unlessStatement.ThenStatement);
+                case UnlessStatement s: {
+                    var boundCondition = BindExpression(s.Condition);
+                    var boundStatement = BindStatement(s.ThenStatement);
 
                     if (boundCondition.Type.IsKnown && boundCondition.Type != BoundPrimitiveType.BooleanPrimitive)
                         Diagnostics.Add(Reports.IfConditionMustBeBoolean());
@@ -52,10 +52,10 @@ namespace Letmebe.Binding {
                     return new BoundIfStatement(boundCondition, boundStatement);
                 }
 
-                case IfOtherwiseStatement ifOtherwiseStatement: {
-                    var boundCondition = BindExpression(ifOtherwiseStatement.Condition);
-                    var boundStatement = BindStatement(ifOtherwiseStatement.ThenStatement);
-                    var boundOtherwiseStatement = BindStatement(ifOtherwiseStatement.OtherwiseStatement);
+                case IfOtherwiseStatement s: {
+                    var boundCondition = BindExpression(s.Condition);
+                    var boundStatement = BindStatement(s.ThenStatement);
+                    var boundOtherwiseStatement = BindStatement(s.OtherwiseStatement);
                     
                     if (boundCondition.Type.IsKnown && boundCondition.Type != BoundPrimitiveType.BooleanPrimitive)
                         Diagnostics.Add(Reports.IfOtherwiseConditionMustBeBoolean());
@@ -63,9 +63,9 @@ namespace Letmebe.Binding {
                     return new BoundIfOtherwiseStatement(boundCondition, boundStatement, boundOtherwiseStatement);
                 }
 
-                case WhileStatement whileStatement: {
-                    var boundCondition = BindExpression(whileStatement.Condition);
-                    var boundStatement = BindStatement(whileStatement.Statement);
+                case WhileStatement s: {
+                    var boundCondition = BindExpression(s.Condition);
+                    var boundStatement = BindStatement(s.Statement);
 
                     if (boundCondition.Type.IsKnown && boundCondition.Type != BoundPrimitiveType.BooleanPrimitive)
                         Diagnostics.Add(Reports.WhileConditionMustBeBoolean());
@@ -73,9 +73,9 @@ namespace Letmebe.Binding {
                     return new BoundWhileStatement(boundCondition, boundStatement);
                 }
 
-                case UntilStatement untilStatement: {
-                    var boundCondition = BindExpression(untilStatement.Condition);
-                    var boundStatement = BindStatement(untilStatement.Statement);
+                case UntilStatement s: {
+                    var boundCondition = BindExpression(s.Condition);
+                    var boundStatement = BindStatement(s.Statement);
 
                     if (boundCondition.Type.IsKnown && boundCondition.Type != BoundPrimitiveType.BooleanPrimitive)
                         Diagnostics.Add(Reports.UntilConditionMustBeBoolean());
@@ -83,13 +83,13 @@ namespace Letmebe.Binding {
                     return new BoundUntilStatement(boundCondition, boundStatement);
                 }
 
-                case DoStatement doStatement: {
-                    return new BoundDoStatement(BindStatement(doStatement.Statement));
+                case DoStatement s: {
+                    return new BoundDoStatement(BindStatement(s.Statement));
                 }
 
-                case DoWhileStatement doWhile: {
-                    var boundStatement = BindStatement(doWhile.Statement);
-                    var boundCondition = BindExpression(doWhile.Condition);
+                case DoWhileStatement s: {
+                    var boundStatement = BindStatement(s.Statement);
+                    var boundCondition = BindExpression(s.Condition);
 
                     if (boundCondition.Type.IsKnown && boundCondition.Type != BoundPrimitiveType.BooleanPrimitive)
                         Diagnostics.Add(Reports.DoWhileConditionMustBeBoolean());
@@ -97,9 +97,9 @@ namespace Letmebe.Binding {
                     return new BoundDoWhiteStatement(boundStatement, boundCondition);
                 }
 
-                case DoUntilStatement doUntil: {
-                    var boundStatement = BindStatement(doUntil.Statement);
-                    var boundCondition = BindExpression(doUntil.Condition);
+                case DoUntilStatement s: {
+                    var boundStatement = BindStatement(s.Statement);
+                    var boundCondition = BindExpression(s.Condition);
 
                     if (boundCondition.Type.IsKnown && boundCondition.Type != BoundPrimitiveType.BooleanPrimitive)
                         Diagnostics.Add(Reports.DoUntilConditionMustBeBoolean());
@@ -107,13 +107,13 @@ namespace Letmebe.Binding {
                     return new BoundDoUntilStatement(boundStatement, boundCondition);
                 }
 
-                case ForeverStatement foreverStatement: {
-                    return new BoundForeverStatement(BindStatement(foreverStatement.Statement));
+                case ForeverStatement s: {
+                    return new BoundForeverStatement(BindStatement(s.Statement));
                 }
 
-                case RepeatTimesStatement repeatTimesStatement: {
-                    var boundAmount = BindExpression(repeatTimesStatement.Amount);
-                    var boundStatement = BindStatement(repeatTimesStatement.Statement);
+                case RepeatTimesStatement s: {
+                    var boundAmount = BindExpression(s.Amount);
+                    var boundStatement = BindStatement(s.Statement);
 
                     if (boundAmount.Type.IsKnown && boundAmount.Type != BoundPrimitiveType.IntegerPrimitive)
                         Diagnostics.Add(Reports.RepeatTimesAmountMustBeInteger());
@@ -121,18 +121,18 @@ namespace Letmebe.Binding {
                     return new BoundRepeatTimesStatement(boundAmount, boundStatement);
                 }
 
-                case ExpressionStatement expressionStatement: {
-                    if (expressionStatement.IsInvalid)
+                case ExpressionStatement s: {
+                    if (s.IsInvalid)
                         Diagnostics.Add(Reports.ExpressionStatementMustBeFunctionCall());
 
-                    var boundExpr = BindExpression(expressionStatement.Expression);
+                    var boundExpr = BindExpression(s.Expression);
                     return new BoundExpressionStatement(boundExpr);
                 }
 
-                case VariableDeclarationStatement variableDeclarationStatement: {
-                    var name = variableDeclarationStatement.Identifier.Str;
-                    var type = BindTypeExpression(variableDeclarationStatement.TypeExpression);
-                    var value = BindExpression(variableDeclarationStatement.Expression);
+                case VariableDeclarationStatement s: {
+                    var name = s.Identifier.Str;
+                    var type = BindTypeExpression(s.TypeExpression);
+                    var value = BindExpression(s.Expression);
 
                     if (!scope.TryRegisterVariable(type, name, out var symbol))
                         Diagnostics.Add(Reports.VariableAlreadyExists(symbol));
@@ -149,49 +149,49 @@ namespace Letmebe.Binding {
 
         private BoundType BindTypeExpression(TypeExpression typeExpr) {
             switch (typeExpr) {
-                case PrimaryTypeExpression primaryType:  {
-                    if (primaryType.TypeToken.Kind == TokenKind.IDENTIFIER)
-                        return GetBoundUserType(primaryType.TypeToken);
-                    if (primaryType.TypeToken.Kind == TokenKind.INT)
+                case PrimaryTypeExpression t:  {
+                    if (t.TypeToken.Kind == TokenKind.IDENTIFIER)
+                        return GetBoundUserType(t.TypeToken);
+                    if (t.TypeToken.Kind == TokenKind.INT)
                         return BoundPrimitiveType.IntegerPrimitive;
-                    if (primaryType.TypeToken.Kind == TokenKind.FLOAT)
+                    if (t.TypeToken.Kind == TokenKind.FLOAT)
                         return BoundPrimitiveType.FloatPrimitive;
-                    if (primaryType.TypeToken.Kind == TokenKind.BOOL)
+                    if (t.TypeToken.Kind == TokenKind.BOOL)
                         return BoundPrimitiveType.BooleanPrimitive;
-                    if (primaryType.TypeToken.Kind == TokenKind.STR)
+                    if (t.TypeToken.Kind == TokenKind.STR)
                         return BoundPrimitiveType.StringPrimitive;
-                    if (primaryType.TypeToken.Kind == TokenKind.CHAR)
+                    if (t.TypeToken.Kind == TokenKind.CHAR)
                         return BoundPrimitiveType.CharacterPrimitive;
-                    if (primaryType.TypeToken.Kind == TokenKind.OBJ)
+                    if (t.TypeToken.Kind == TokenKind.OBJ)
                         return BoundPrimitiveType.ObjectPrimitive;
-                    if (primaryType.TypeToken.Kind == TokenKind.TYPE)
+                    if (t.TypeToken.Kind == TokenKind.TYPE)
                         return BoundPrimitiveType.TypePrimitive;
                     break;
                 }
 
-                case ParenthesizedTypeExpression parenthesizedTypeExpression: {
-                    return BindTypeExpression(parenthesizedTypeExpression.TypeExpression);
+                case ParenthesizedTypeExpression t: {
+                    return BindTypeExpression(t.TypeExpression);
                 }
 
-                case ArrayTypeExpression arrayTypeExpression: {
-                    var boundTypeExpr = BindTypeExpression(arrayTypeExpression.TypeExpression);
+                case ArrayTypeExpression t: {
+                    var boundTypeExpr = BindTypeExpression(t.TypeExpression);
                     return new BoundArrayType(boundTypeExpr);
                 }
 
-                case TupleTypeExpression tupleTypeExpression: {
-                    var boundTypeExprs = tupleTypeExpression.TypeExpressions.Select(t => BindTypeExpression(t)).ToArray();
+                case TupleTypeExpression t: {
+                    var boundTypeExprs = t.TypeExpressions.Select(t => BindTypeExpression(t)).ToArray();
                     return new BoundTupleType(boundTypeExprs);
                 }
 
-                case FunctionTypeExpression functionTypeExpression: {
-                    var boundParameterTypeExpr = BindTypeExpression(functionTypeExpression.ParameterTypeExpression);
-                    var boundReturnTypeExpr = BindTypeExpression(functionTypeExpression.ReturnTypeExpression);
+                case FunctionTypeExpression t: {
+                    var boundParameterTypeExpr = BindTypeExpression(t.ParameterTypeExpression);
+                    var boundReturnTypeExpr = BindTypeExpression(t.ReturnTypeExpression);
                     return new BoundFunctionType(boundParameterTypeExpr, boundReturnTypeExpr);
                 }
 
-                case GenericTypeExpression genericTypeExpression: {
-                    var boundUserType = GetBoundUserType(genericTypeExpression.Identifier, genericTypeExpression.TypeExpressions.Length);
-                    var boundTypeExprs = genericTypeExpression.TypeExpressions.Select(t => BindTypeExpression(t)).ToArray();
+                case GenericTypeExpression t: {
+                    var boundUserType = GetBoundUserType(t.Identifier, t.TypeExpressions.Length);
+                    var boundTypeExprs = t.TypeExpressions.Select(t => BindTypeExpression(t)).ToArray();
                     return new BoundGenericType(boundUserType, boundTypeExprs);
                 }
             }
@@ -201,43 +201,43 @@ namespace Letmebe.Binding {
 
         private BoundExpression BindExpression(Expression expr) {
             switch (expr) {
-                case IntegerLiteral integerLiteral: {
-                    int value = (int)integerLiteral.IntegerToken.Value;
+                case IntegerLiteral e: {
+                    int value = (int)e.IntegerToken.Value;
                     return new BoundLiteral(BoundPrimitiveType.IntegerPrimitive, value);
                 }
 
-                case DecimalLiteral floatLiteral: {
-                    float value = (float)floatLiteral.FloatToken.Value;
+                case DecimalLiteral e: {
+                    float value = (float)e.FloatToken.Value;
                     return new BoundLiteral(BoundPrimitiveType.FloatPrimitive, value);
                 }
 
-                case BooleanLiteral booleanLiteral: {
-                    bool value = (bool)booleanLiteral.BooleanToken.Value;
+                case BooleanLiteral e: {
+                    bool value = (bool)e.BooleanToken.Value;
                     return new BoundLiteral(BoundPrimitiveType.BooleanPrimitive, value);
                 }
 
-                case StringLiteral stringLiteral: {
-                    string value = (string)stringLiteral.StringToken.Value;
+                case StringLiteral e: {
+                    string value = (string)e.StringToken.Value;
                     return new BoundLiteral(BoundPrimitiveType.StringPrimitive, value);
                 }
 
-                case CharacterLiteral characterLiteral: {
-                    char value = (char)characterLiteral.CharacterToken.Value;
+                case CharacterLiteral e: {
+                    char value = (char)e.CharacterToken.Value;
                     return new BoundLiteral(BoundPrimitiveType.CharacterPrimitive, value);
                 }
 
-                case VariableLiteral variableLiteral: {
-                    return GetBoundVariable(variableLiteral.IdentifierToken);
+                case VariableLiteral e: {
+                    return GetBoundVariable(e.IdentifierToken);
                 }
 
-                case ParenthesizedExpression parenthesizedExpression: {
-                    return BindExpression(parenthesizedExpression.Expression);
+                case ParenthesizedExpression e: {
+                    return BindExpression(e.Expression);
                 }
 
-                case BinaryOperationExpression binaryOperationExpression: {
-                    var boundLeft = BindExpression(binaryOperationExpression.LeftOperand);
-                    var opToken = binaryOperationExpression.Op.Kind;
-                    var boundRight = BindExpression(binaryOperationExpression.RightOperand);
+                case BinaryOperationExpression e: {
+                    var boundLeft = BindExpression(e.LeftOperand);
+                    var opToken = e.Op.Kind;
+                    var boundRight = BindExpression(e.RightOperand);
 
                     foreach (BoundBinaryOperator op in BoundBinaryOperator.BinaryOperators) {
                         if (op.OperatorToken == opToken && op.LeftType == boundLeft.Type && op.RightType == boundRight.Type)
@@ -251,9 +251,9 @@ namespace Letmebe.Binding {
                     return new BoundBinaryOperation(boundLeft, unknownOperator, boundRight);
                 }
 
-                case UnaryOperationExpression unaryOperationExpression: {
-                    var boundOperand = BindExpression(unaryOperationExpression.Operand);
-                    var opToken = unaryOperationExpression.Op.Kind;
+                case UnaryOperationExpression e: {
+                    var boundOperand = BindExpression(e.Operand);
+                    var opToken = e.Op.Kind;
 
                     foreach (BoundUnaryOperator op in BoundUnaryOperator.UnaryOperators) {
                         if (op.OperatorToken == opToken && op.OperandType == boundOperand.Type)
@@ -271,9 +271,9 @@ namespace Letmebe.Binding {
                     throw new NotImplementedException("TODO: Member lookup");
                 }
 
-                case IndexingExpression indexingExpression: {
-                    var boundExpression = BindExpression(indexingExpression.Expression);
-                    var boundIndexExpression = BindExpression(indexingExpression.IndexExpression);
+                case IndexingExpression e: {
+                    var boundExpression = BindExpression(e.Expression);
+                    var boundIndexExpression = BindExpression(e.IndexExpression);
 
                     foreach (BoundIndexerOperator op in BoundIndexerOperator.IndexerOperators) {
                         if (op.IndexedType == boundExpression.Type && op.IndexerTypes[0] == boundIndexExpression.Type)
@@ -287,11 +287,11 @@ namespace Letmebe.Binding {
                     return new BoundIndexingExpression(boundExpression, boundIndexExpression, unknownOperator);
                 }
 
-                case FunctionCallExpression functionCallExpression: {
+                case FunctionCallExpression e: {
                     List<BoundExpression> parameters = new();
                     bool allTypesKnown = true;
 
-                    var boundWords = functionCallExpression.Words.Select<FunctionCallWord, BoundFunctionWord>(word => {
+                    var boundWords = e.Words.Select<FunctionCallWord, BoundFunctionWord>(word => {
                         if (word is FunctionCallIdentifier identifierWord)
                             return new BoundFunctionIdentifierWord(identifierWord.Variable.IdentifierToken.Str);
                         else {
