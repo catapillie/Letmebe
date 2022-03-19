@@ -175,7 +175,7 @@ namespace Letmebe.Parsing {
             return new BlockStatement(leftBraceToken, statements.ToArray(), rightBraceToken);
         }
 
-        private IfStatement ParseIfStatement() {
+        private Statement ParseIfStatement() {
             var ifToken = Step();
             var condition = ParseExpression();
             var then = ParseStatement(out bool fail);
@@ -189,7 +189,7 @@ namespace Letmebe.Parsing {
                     Diagnostics.Add(Reports.ExpectedStatementAfterIfOtherwise());
                     otherwise = new Statement();
                 }
-                return new IfStatement(ifToken, condition, then, otherwiseToken, otherwise);
+                return new IfOtherwiseStatement(ifToken, condition, then, otherwiseToken, otherwise);
             }
             return new IfStatement(ifToken, condition, then);
         }
