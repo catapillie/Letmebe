@@ -8,6 +8,8 @@ namespace Letmebe.Binding {
         private readonly Dictionary<string, BoundSymbol> variables = new();
         private readonly Dictionary<BoundFunctionTemplate, BoundFunctionSymbol> functions = new();
 
+        public BoundType? ReturnType = null;
+
         public Scope(Scope? parentScope = null) {
             ParentScope = parentScope;
         }

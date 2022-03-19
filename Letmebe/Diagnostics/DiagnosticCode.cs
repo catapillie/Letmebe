@@ -174,5 +174,15 @@
         /// Function already defined in current scope
         /// </summary>
         LMB0035,
+
+        /// <summary>
+        /// Return statement must be used within a function
+        /// </summary>
+        LMB0036,
+
+        /// <summary>
+        /// Current function is expected to return given type
+        /// </summary>
+        LMB0037,
     }
 }

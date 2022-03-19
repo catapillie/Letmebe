@@ -149,8 +149,15 @@ namespace Letmebe.Binding {
                 }
 
                 case ReturnStatement s: {
+                    if (scope.ReturnType is null)
+                        Diagnostics.Add(Reports.ReturnStatementMustBeUsedWithinFunction());
+                            
                     if (s.Expression is not null) {
                         var boundExpression = BindExpression(s.Expression);
+
+                        // Uses 'is not null' instead of overloaded operator '!=' (for null checking only)
+                        if (scope.ReturnType is not null && boundExpression.Type != scope.ReturnType)
+                            Diagnostics.Add(Reports.ExpectedReturnTypeInsteadOf(scope.ReturnType, boundExpression.Type));
                         return new BoundReturnStatement(boundExpression);
                     }
 
@@ -160,7 +167,7 @@ namespace Letmebe.Binding {
                 case EmptyStatement:
                     return null!;
             }
-
+            
             throw new Exception($"Unimplemented statement binding for type {statement.GetType()}");
         }
 
@@ -203,6 +210,7 @@ namespace Letmebe.Binding {
                 Diagnostics.Add(Reports.FunctionAlreadyDefined(functionSymbol));
 
             ++scope; // This is placed before the arguments are declared, and after the function is registerd.
+            scope.ReturnType = returnType;
 
             foreach (var (type, name) in declaredParameters)
                 if (!scope.TryRegisterVariable(type, name, out var symbol))

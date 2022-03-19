@@ -93,7 +93,7 @@ namespace Letmebe.Diagnostics {
         }
 
         internal static Diagnostic UndefinedFunction(BoundFunctionTemplate template) {
-            return new($"Function with signature '{template}' does not exist in current scope", DiagnosticCode.LMB0023);
+            return new($"Function with signature {template} does not exist in current scope", DiagnosticCode.LMB0023);
         }
 
         internal static Diagnostic ExpressionStatementMustBeFunctionCall() {
@@ -145,7 +145,15 @@ namespace Letmebe.Diagnostics {
         }
 
         internal static Diagnostic FunctionAlreadyDefined(BoundFunctionSymbol functionSymbol) {
-            return new($"A function with signature '{functionSymbol}' already exists in current scope", DiagnosticCode.LMB0035);
+            return new($"A function with signature {functionSymbol} already exists in current scope", DiagnosticCode.LMB0035);
+        }
+
+        internal static Diagnostic ReturnStatementMustBeUsedWithinFunction() {
+            return new($"A return statement must be used within a function", DiagnosticCode.LMB0036);
+        }
+
+        internal static Diagnostic ExpectedReturnTypeInsteadOf(BoundType returnType, BoundType type) {
+            return new($"The current function is expected to return {returnType} instead of {type}", DiagnosticCode.LMB0037);
         }
     }
 }
