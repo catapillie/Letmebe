@@ -328,7 +328,7 @@ namespace Letmebe.Binding {
                     if (boundLeft.Type.IsKnown && boundRight.Type.IsKnown)
                         Diagnostics.Add(Reports.UndefinedBinaryOperator(opToken, boundLeft.Type, boundRight.Type));
 
-                    BoundBinaryOperator unknownOperator = new(opToken, boundLeft.Type, boundRight.Type, BoundType.Unknown);
+                    BoundBinaryOperator unknownOperator = new(opToken, BoundBinaryOperator.Operation.Unknown, boundLeft.Type, boundRight.Type, BoundType.Unknown);
                     return new BoundBinaryOperation(boundLeft, unknownOperator, boundRight);
                 }
 
@@ -344,7 +344,7 @@ namespace Letmebe.Binding {
                     if (boundOperand.Type.IsKnown)
                         Diagnostics.Add(Reports.UndefinedUnaryOperator(opToken, boundOperand.Type));
 
-                    BoundUnaryOperator unknownOperator = new(opToken, boundOperand.Type, BoundType.Unknown);
+                    BoundUnaryOperator unknownOperator = new(opToken, BoundUnaryOperator.Operation.Unknown, boundOperand.Type, BoundType.Unknown);
                     return new BoundUnaryOperation(boundOperand, unknownOperator);
                 }
 
@@ -364,7 +364,7 @@ namespace Letmebe.Binding {
                     if (boundExpression.Type.IsKnown && boundIndexExpression.Type.IsKnown)
                         Diagnostics.Add(Reports.UndefinedIndexerOperator(boundExpression.Type, boundIndexExpression.Type));
 
-                    BoundIndexerOperator unknownOperator = new(boundExpression.Type, new[] { boundIndexExpression.Type }, BoundType.Unknown);
+                    BoundIndexerOperator unknownOperator = new(boundExpression.Type, BoundIndexerOperator.Operation.Unknown, new[] { boundIndexExpression.Type }, BoundType.Unknown);
                     return new BoundIndexingExpression(boundExpression, boundIndexExpression, unknownOperator);
                 }
 

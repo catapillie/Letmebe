@@ -2,14 +2,14 @@
     internal sealed class BoundIndexingExpression : BoundExpression {
         public readonly BoundExpression Expression;
         public readonly BoundExpression IndexExpression;
-        public readonly BoundIndexerOperator IndexerOperator;
+        public readonly BoundIndexerOperator Operator;
 
-        public override BoundType Type => IndexerOperator.ReturnType;
+        public override BoundType Type => Operator.ReturnType;
 
         public BoundIndexingExpression(BoundExpression expression, BoundExpression indexExpression, BoundIndexerOperator indexerOperator) {
             Expression = expression;
             IndexExpression = indexExpression;
-            IndexerOperator = indexerOperator;
+            Operator = indexerOperator;
         }
     }
 }

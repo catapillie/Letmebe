@@ -1,10 +1,13 @@
 ﻿using Letmebe.Binding;
 using Letmebe.Binding.Nodes;
 using Letmebe.Diagnostics;
+using Letmebe.Evaluation;
 using Letmebe.Lexing;
 using Letmebe.Parsing;
 using Letmebe.Parsing.Nodes;
 
+
+Evaluator evaluator = new();
 
 Console.ForegroundColor = ConsoleColor.White;
 while (true) {
@@ -27,8 +30,9 @@ while (true) {
     var program = parser.Parse();
     Display(program);
     Console.WriteLine();
-     
-    DisplayBound(binder.Bind(program));
+
+    var boundProgram = binder.Bind(program);
+    DisplayBound(boundProgram);
     Console.WriteLine();
 
 
@@ -40,9 +44,12 @@ while (true) {
         Console.WriteLine();
     } else {
         Console.ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine("Ok\n");
+        Console.WriteLine("Ok");
         Console.ForegroundColor = ConsoleColor.White;
     }
+
+    // evaluating whether diagnostics were generated or not, will move to else block above
+    evaluator.Evaluate(boundProgram);
 }
 
 static void Display(SyntaxNode node, string indent = "") {
