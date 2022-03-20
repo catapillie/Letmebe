@@ -13,7 +13,7 @@ namespace Letmebe.Binding.Nodes {
                 yield return statement;
         }
 
-        public BoundNode Rewritten() {
+        public BoundProgram Rewritten() {
             BoundStatement[] loweredStatements = new BoundStatement[Statements.Length];
             for (int i = 0; i < Statements.Length; i++)
                 loweredStatements[i] = Statements[i].Lowered();

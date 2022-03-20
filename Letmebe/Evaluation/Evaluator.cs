@@ -11,8 +11,42 @@ namespace Letmebe.Evaluation     {
         /// </summary>
         /// <param name="program">The node to evaluate</param>
         public void Evaluate(BoundProgram program) {
-            foreach (var statement in program.Statements) {
-                EvaluateStatement(statement);
+            EvaluateStatements(program.Statements);
+        }
+
+        private void EvaluateStatements(BoundStatement[] statements) {
+            Dictionary<BoundLabelStatement, int> indices = new();
+
+            for (int i = 0; i < statements.Length; i++) {
+                var statement = statements[i];
+                if (statement is BoundLabelStatement label)
+                    indices[label] = i;
+            }
+
+            for (int i = 0; i < statements.Length; i++) {
+                var statement = statements[i];
+
+                switch (statement) {
+                    case BoundGotoStatement s: {
+                        i = indices[s.Label];
+                        continue;
+                    }
+
+                    case BoundConditionalGotoStatement s: {
+                        bool? condition = (bool?)EvaluateExpression(s.Condition);
+                        if (condition.HasValue) {
+                            bool jump = condition.Value;
+
+                            if (jump ^ s.Negated)
+                                i = indices[s.Label];
+                        }
+                        continue;
+                    }
+
+                    default:
+                        EvaluateStatement(statement);
+                        break;
+                }
             }
         }
 
@@ -20,18 +54,20 @@ namespace Letmebe.Evaluation     {
             switch (statement) {
                 case BoundBlockStatement s: {
                     ++scope;
-                    foreach (var stmt in s.Body)
-                        Console.WriteLine(EvaluateStatement(stmt));
+                    EvaluateStatements(s.Body);
                     --scope;
                     break;
                 }
 
                 case BoundExpressionStatement s: {
-                    return EvaluateExpression(s.Expression);
+                    var v = EvaluateExpression(s.Expression);
+                    if (s.Expression is not BoundAssignmentExpression)
+                        Console.WriteLine(v);
+                    return v;
                 }
 
                 case BoundVariableDefinitionStatement s: {
-                    scope[s.Variable] = EvaluateExpression(s.Value);
+                    scope.DeclareVariable(s.Variable, EvaluateExpression(s.Value));
                     break;
                 }
             }

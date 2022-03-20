@@ -32,10 +32,11 @@ while (true) {
     Console.WriteLine();
 
     var boundProgram = binder.Bind(program);
+    var boundRewrittenProgram = boundProgram.Rewritten();
     DisplayBound(boundProgram);
     Console.ForegroundColor = ConsoleColor.Yellow;
     Console.WriteLine("\nLowered bound tree:");
-    DisplayBound(boundProgram.Rewritten());
+    DisplayBound(boundRewrittenProgram);
     Console.WriteLine();
 
 
@@ -51,7 +52,7 @@ while (true) {
         Console.ForegroundColor = ConsoleColor.White;
     }
 
-    evaluator.Evaluate(boundProgram);
+    evaluator.Evaluate(boundRewrittenProgram);
 }
 
 static void Display(SyntaxNode node, string indent = "") {

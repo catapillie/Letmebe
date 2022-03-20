@@ -6,7 +6,12 @@ namespace Letmebe.Evaluation {
 
         public object? this[BoundSymbol symbol] {
             get => variables.TryGetValue(symbol, out var value) ? value : ParentScope?[symbol];
-            set => variables[symbol] = value;
+            set {
+                if (variables.ContainsKey(symbol))
+                    variables[symbol] = value;
+                else if (ParentScope != null)
+                    ParentScope[symbol] = value;
+            }
         }
 
         private readonly Dictionary<BoundSymbol, object?> variables = new();
@@ -14,6 +19,9 @@ namespace Letmebe.Evaluation {
         public EvalScope(EvalScope? parentScope = null) {
             ParentScope = parentScope;
         }
+
+        public void DeclareVariable(BoundSymbol symbol, object? value)
+            => variables[symbol] = value;
 
         public static EvalScope operator ++(EvalScope scope)
             => new(scope);
