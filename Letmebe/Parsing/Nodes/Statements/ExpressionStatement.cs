@@ -12,7 +12,7 @@ namespace Letmebe.Parsing.Nodes {
             Expression = expression;
             SemicolonToken = semicolonToken;
 
-            IsInvalid = expression is not FunctionCallExpression;
+            IsInvalid = expression is not (FunctionCallExpression or AssignmentExpression);
         }
 
         public override IEnumerable Children() {

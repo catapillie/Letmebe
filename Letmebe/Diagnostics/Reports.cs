@@ -96,10 +96,6 @@ namespace Letmebe.Diagnostics {
             return new($"Function with signature {template} does not exist in current scope", DiagnosticCode.LMB0023);
         }
 
-        internal static Diagnostic ExpressionStatementMustBeFunctionCall() {
-            return new("An expression can only be a statement if it is a function call", DiagnosticCode.LMB0023);
-        }
-
         internal static Diagnostic VariableAlreadyExists(BoundSymbol symbol) {
             return new($"A variable named '{symbol.Name}' already exists in current scope", DiagnosticCode.LMB0024);
         }
@@ -154,6 +150,14 @@ namespace Letmebe.Diagnostics {
 
         internal static Diagnostic ExpectedReturnTypeInsteadOf(BoundType returnType, BoundType type) {
             return new($"The current function is expected to return {returnType} instead of {type}", DiagnosticCode.LMB0037);
+        }
+
+        internal static Diagnostic CannotAssignTypeToTargetType(BoundType type, BoundType targetType) {
+            return new($"Cannot assign {type} to {targetType} target", DiagnosticCode.LMB0038);
+        }
+
+        internal static Diagnostic ExpressionStatementMustBeFunctionCallOrAssignment() {
+            return new("An expression can only be a statement if it is an assignment or a function call", DiagnosticCode.LMB0039);
         }
     }
 }

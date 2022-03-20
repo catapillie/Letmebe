@@ -72,7 +72,7 @@ namespace Letmebe.Parsing {
                 typeExpr = new();
             }
 
-            if (TryMatch(TokenKind.ARROW, out var arrowToken)) {
+            if (TryMatch(TokenKind.RIGHTARROW, out var arrowToken)) {
                 var returnTypeExpression = ParseTypeExpression();
                 return new FunctionTypeExpression(typeExpr, arrowToken, returnTypeExpression);
             }
@@ -400,7 +400,7 @@ namespace Letmebe.Parsing {
             } else if (TryMatch(TokenKind.INTEGER, out var intToken))
                 expr = new IntegerLiteral(intToken);
             else if (TryMatch(TokenKind.DECIMAL, out var decimalNode))
-                expr = new Nodes.DecimalLiteral(decimalNode);
+                expr = new DecimalLiteral(decimalNode);
             else if (TryMatch(TokenKind.TRUE, out var trueToken))
                 expr = new BooleanLiteral(trueToken);
             else if (TryMatch(TokenKind.FALSE, out var falseToken))
@@ -427,6 +427,11 @@ namespace Letmebe.Parsing {
                     expr = new IndexingExpression(expr, leftBracketToken, indexExpression, rightBracketToken);
                 } else
                     break;
+            }
+
+            if (TryMatch(TokenKind.LEFTARROW, out var leftArrowToken)) {
+                var valueExpression = ParseExpression();
+                expr = new AssignmentExpression(expr, leftArrowToken, valueExpression);
             }
 
             return expr;

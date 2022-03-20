@@ -50,6 +50,8 @@ while (true) {
         Console.WriteLine("Ok");
         Console.ForegroundColor = ConsoleColor.White;
     }
+
+    evaluator.Evaluate(boundProgram);
 }
 
 static void Display(SyntaxNode node, string indent = "") {

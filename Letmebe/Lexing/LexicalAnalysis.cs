@@ -39,7 +39,8 @@ namespace Letmebe.Lexing {
             (TokenKind.CHARACTER, new Regex(@"^'[^\n]'", RegexOptions.Compiled), s => s[1]),
             (TokenKind.IDENTIFIER, new Regex(@"^\w+'*", RegexOptions.Compiled), null!),
 
-            (TokenKind.ARROW, new Regex(@"^->", RegexOptions.Compiled), null!),
+            (TokenKind.RIGHTARROW, new Regex(@"^->", RegexOptions.Compiled), null!),
+            (TokenKind.LEFTARROW, new Regex(@"^<-", RegexOptions.Compiled), null!),
             (TokenKind.DOTDOTDOT, new Regex(@"^\.{3}(?!\.)", RegexOptions.Compiled), null!),
             
             (TokenKind.EQUALS, new Regex(@"^==", RegexOptions.Compiled), null!),

@@ -184,5 +184,15 @@
         /// Current function is expected to return given type
         /// </summary>
         LMB0037,
+
+        /// <summary>
+        /// Cannot assign type to target type
+        /// </summary>
+        LMB0038,
+
+        /// <summary>
+        /// Expression statement must be assignment or function call
+        /// </summary>
+        LMB0039,
     }
 }

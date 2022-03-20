@@ -12,7 +12,7 @@ namespace Letmebe.Evaluation     {
         /// <param name="program">The node to evaluate</param>
         public void Evaluate(BoundProgram program) {
             foreach (var statement in program.Statements) {
-                Console.WriteLine(EvaluateStatement(statement));
+                EvaluateStatement(statement);
             }
         }
 
@@ -58,6 +58,13 @@ namespace Letmebe.Evaluation     {
 
                 case BoundIndexingExpression e: {
                     return EvaluateIndexingExpression(e);
+                }
+
+                case BoundAssignmentExpression s: {
+                    var value = EvaluateExpression(s.Value);
+                    if (s.Target is BoundSymbol symbol)
+                        scope[symbol] = value;
+                    return value;
                 }
             }
 

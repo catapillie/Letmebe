@@ -122,7 +122,7 @@ namespace Letmebe.Binding {
 
                 case ExpressionStatement s: {
                     if (s.IsInvalid)
-                        Diagnostics.Add(Reports.ExpressionStatementMustBeFunctionCall());
+                        Diagnostics.Add(Reports.ExpressionStatementMustBeFunctionCallOrAssignment());
 
                     var boundExpr = BindExpression(s.Expression);
                     return new BoundExpressionStatement(boundExpr);
@@ -308,6 +308,16 @@ namespace Letmebe.Binding {
 
                 case VariableLiteral e: {
                     return GetBoundVariable(e.IdentifierToken);
+                }
+
+                case AssignmentExpression e: {
+                    var boundTarget = BindExpression(e.Target);
+                    var boundValue = BindExpression(e.Value);
+
+                    if (boundTarget.Type.IsKnown && boundValue.Type.IsKnown && boundTarget.Type != boundValue.Type)
+                        Diagnostics.Add(Reports.CannotAssignTypeToTargetType(boundValue.Type, boundTarget.Type));
+
+                    return new BoundAssignmentExpression(boundTarget, boundValue);
                 }
 
                 case ParenthesizedExpression e: {
