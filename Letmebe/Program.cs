@@ -33,6 +33,9 @@ while (true) {
 
     var boundProgram = binder.Bind(program);
     DisplayBound(boundProgram);
+    Console.ForegroundColor = ConsoleColor.Yellow;
+    Console.WriteLine("\nLowered bound tree:");
+    DisplayBound(boundProgram.Rewritten());
     Console.WriteLine();
 
 
@@ -47,9 +50,6 @@ while (true) {
         Console.WriteLine("Ok");
         Console.ForegroundColor = ConsoleColor.White;
     }
-
-    // evaluating whether diagnostics were generated or not, will move to else block above
-    evaluator.Evaluate(boundProgram);
 }
 
 static void Display(SyntaxNode node, string indent = "") {

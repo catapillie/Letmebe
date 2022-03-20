@@ -12,5 +12,12 @@ namespace Letmebe.Binding.Nodes {
             foreach (var statement in Statements)
                 yield return statement;
         }
+
+        public BoundNode Rewritten() {
+            BoundStatement[] loweredStatements = new BoundStatement[Statements.Length];
+            for (int i = 0; i < Statements.Length; i++)
+                loweredStatements[i] = Statements[i].Lowered();
+            return new BoundProgram(loweredStatements);
+        }
     }
 }

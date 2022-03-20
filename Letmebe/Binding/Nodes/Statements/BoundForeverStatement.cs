@@ -11,5 +11,24 @@ namespace Letmebe.Binding.Nodes {
         public override IEnumerable Children() {
             yield return Statement;
         }
+
+        public override BoundStatement Lowered() {
+            /*
+             * ...
+             * @forever
+             * <statement>
+             * goto forever
+             * ...
+             */
+
+            var foreverLabel = new BoundLabelStatement("@forever");
+            var gotoLabel = new BoundGotoStatement(foreverLabel);
+
+            return new BoundBlockStatement(new[] {
+                foreverLabel,
+                Statement.Lowered(),
+                gotoLabel,
+            });
+        }
     }
 }

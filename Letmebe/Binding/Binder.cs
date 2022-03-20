@@ -19,7 +19,6 @@ namespace Letmebe.Binding {
 
         private BoundStatement[] BindStatementArray(Statement[] statements)
             => statements.Select(s => BindStatement(s))
-                         .Where(s => s is not null)
                          .ToArray();
 
         private BoundStatement BindStatement(Statement statement) {
@@ -165,7 +164,7 @@ namespace Letmebe.Binding {
                 }
 
                 case EmptyStatement:
-                    return null!;
+                    return new BoundEmptyStatement();
             }
             
             throw new Exception($"Unimplemented statement binding for type {statement.GetType()}");

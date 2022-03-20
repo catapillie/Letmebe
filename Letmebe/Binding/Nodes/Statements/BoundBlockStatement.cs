@@ -12,5 +12,12 @@ namespace Letmebe.Binding.Nodes {
             foreach (var statement in Body)
                 yield return statement;
         }
+
+        public override BoundStatement Lowered() {
+            BoundStatement[] loweredBody = new BoundStatement[Body.Length];
+            for (int i = 0; i < Body.Length; i++)
+                loweredBody[i] = Body[i].Lowered();
+            return new BoundBlockStatement(loweredBody);
+        }
     }
 }

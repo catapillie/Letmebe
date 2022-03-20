@@ -14,5 +14,24 @@ namespace Letmebe.Binding.Nodes.Statements {
             yield return Condition;
             yield return Statement;
         }
+
+        public override BoundStatement Lowered() {
+            /*
+             * ...
+             * goto @end if <condition>
+             * <statement>
+             * @end
+             * ...
+             */
+
+            var endLabel = new BoundLabelStatement("@end");
+            var gotoEnd = new BoundConditionalGotoStatement(endLabel, Condition, negated: false);
+
+            return new BoundBlockStatement(new[] {
+                gotoEnd,
+                Statement.Lowered(),
+                endLabel,
+            });
+        }
     }
 }

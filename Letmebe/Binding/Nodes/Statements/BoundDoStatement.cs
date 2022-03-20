@@ -11,5 +11,8 @@ namespace Letmebe.Binding.Nodes {
         public override IEnumerable Children() {
             yield return Statement;
         }
+
+        public override BoundStatement Lowered()
+            => new BoundDoStatement(Statement.Lowered());
     }
 }

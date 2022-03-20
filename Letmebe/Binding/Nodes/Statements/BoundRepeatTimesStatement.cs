@@ -14,5 +14,7 @@ namespace Letmebe.Binding.Nodes {
             yield return Amount;
             yield return Statement;
         }
+
+        // TODO: Lowering (needs assignment expression)
     }
 }

@@ -14,5 +14,8 @@ namespace Letmebe.Binding.Nodes {
             yield return Symbol;
             yield return Body;
         }
+
+        public override BoundStatement Lowered()
+            => new BoundFunctionDefinitionStatement(Symbol, Body.Lowered());
     }
 }
