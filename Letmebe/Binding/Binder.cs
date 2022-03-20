@@ -136,6 +136,9 @@ namespace Letmebe.Binding {
                     if (!scope.TryRegisterVariable(type, name, out var symbol))
                         Diagnostics.Add(Reports.VariableAlreadyExists(symbol));
 
+                    if (symbol.Type.IsKnown && value.Type.IsKnown && value.Type != symbol.Type)
+                        Diagnostics.Add(Reports.CannotAssignTypeToTargetType(value.Type, symbol.Type));
+
                     return new BoundVariableDefinitionStatement(symbol, value);
                 }
 
