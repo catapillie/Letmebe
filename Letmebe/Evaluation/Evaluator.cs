@@ -6,7 +6,7 @@ namespace Letmebe.Evaluation     {
         private EvalScope scope = new();
 
         /// <summary>
-        /// Evaluates a bound node.
+        /// Evaluates a bound program.
         /// This can only be called if the lexing, parsing and binding have not generated any diagnostics.
         /// </summary>
         /// <param name="program">The node to evaluate</param>
@@ -18,8 +18,21 @@ namespace Letmebe.Evaluation     {
 
         private object? EvaluateStatement(BoundStatement statement) {
             switch (statement) {
+                case BoundBlockStatement s: {
+                    ++scope;
+                    foreach (var stmt in s.Body)
+                        Console.WriteLine(EvaluateStatement(stmt));
+                    --scope;
+                    break;
+                }
+
                 case BoundExpressionStatement s: {
                     return EvaluateExpression(s.Expression);
+                }
+
+                case BoundVariableDefinitionStatement s: {
+                    scope[s.Variable] = EvaluateExpression(s.Value);
+                    break;
                 }
             }
             return null;
@@ -29,6 +42,10 @@ namespace Letmebe.Evaluation     {
             switch (expression) {
                 case BoundLiteral e: {
                     return e.Value;
+                }
+
+                case BoundSymbol e: {
+                    return scope[e];
                 }
 
                 case BoundBinaryOperation e: {

@@ -4,7 +4,12 @@ namespace Letmebe.Evaluation {
     internal sealed class EvalScope {
         private readonly EvalScope? ParentScope;
 
-        public BoundType? ReturnType = null;
+        public object? this[BoundSymbol symbol] {
+            get => variables.TryGetValue(symbol, out var value) ? value : ParentScope?[symbol];
+            set => variables[symbol] = value;
+        }
+
+        private readonly Dictionary<BoundSymbol, object?> variables = new();
 
         public EvalScope(EvalScope? parentScope = null) {
             ParentScope = parentScope;
