@@ -48,7 +48,7 @@ namespace Letmebe.Binding {
                     if (boundCondition.Type.IsKnown && boundCondition.Type != BoundPrimitiveType.BooleanPrimitive)
                         Diagnostics.Add(Reports.IfConditionMustBeBoolean());
 
-                    return new BoundIfStatement(boundCondition, boundStatement);
+                    return new BoundUnlessStatement(boundCondition, boundStatement);
                 }
 
                 case IfOtherwiseStatement s: {

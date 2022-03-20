@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 
-namespace Letmebe.Binding.Nodes.Statements {
+namespace Letmebe.Binding.Nodes {
     internal sealed class BoundUnlessStatement : BoundStatement {
         public readonly BoundExpression Condition;
         public readonly BoundStatement Statement;
