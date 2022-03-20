@@ -93,7 +93,7 @@ namespace Letmebe.Binding {
                     if (boundCondition.Type.IsKnown && boundCondition.Type != BoundPrimitiveType.BooleanPrimitive)
                         Diagnostics.Add(Reports.DoWhileConditionMustBeBoolean());
 
-                    return new BoundDoWhiteStatement(boundStatement, boundCondition);
+                    return new BoundDoWhileStatement(boundStatement, boundCondition);
                 }
 
                 case DoUntilStatement s: {

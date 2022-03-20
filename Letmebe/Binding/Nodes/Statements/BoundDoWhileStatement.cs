@@ -1,11 +1,11 @@
 ﻿using System.Collections;
 
 namespace Letmebe.Binding.Nodes {
-    internal sealed class BoundDoWhiteStatement : BoundStatement {
+    internal sealed class BoundDoWhileStatement : BoundStatement {
         public readonly BoundStatement Statement;
         public readonly BoundExpression Condition;
 
-        public BoundDoWhiteStatement(BoundStatement statement, BoundExpression condition) {
+        public BoundDoWhileStatement(BoundStatement statement, BoundExpression condition) {
             Statement = statement;
             Condition = condition;
         }
