@@ -11,11 +11,12 @@ namespace Letmebe.Evaluation     {
         /// </summary>
         /// <param name="program">The node to evaluate</param>
         public void Evaluate(BoundProgram program) {
-            EvaluateStatements(program.Statements);
+            EvaluateStatements(program.Statements, out _);
         }
 
-        private void EvaluateStatements(BoundStatement[] statements) {
+        private object? EvaluateStatements(BoundStatement[] statements, out bool exit) {
             Dictionary<BoundLabelStatement, int> indices = new();
+            exit = false;
 
             for (int i = 0; i < statements.Length; i++) {
                 var statement = statements[i];
@@ -27,40 +28,49 @@ namespace Letmebe.Evaluation     {
                 var statement = statements[i];
 
                 switch (statement) {
-                    case BoundGotoStatement s: {
-                        i = indices[s.Label];
+                    case BoundGotoStatement gotoStatement: {
+                        i = indices[gotoStatement.Label];
                         continue;
                     }
 
-                    case BoundConditionalGotoStatement s: {
-                        bool? condition = (bool?)EvaluateExpression(s.Condition);
+                    case BoundConditionalGotoStatement conditionalGotoStatement: {
+                        bool? condition = (bool?)EvaluateExpression(conditionalGotoStatement.Condition);
                         if (condition.HasValue) {
                             bool jump = condition.Value;
 
-                            if (jump ^ s.Negated)
-                                i = indices[s.Label];
+                            if (jump ^ conditionalGotoStatement.Negated)
+                                i = indices[conditionalGotoStatement.Label];
                         }
                         continue;
                     }
 
                     default:
-                        EvaluateStatement(statement);
+                        var result = EvaluateStatement(statement, out exit);
+                        if (exit)
+                            return result;
                         break;
                 }
             }
+            return null;
         }
 
-        private object? EvaluateStatement(BoundStatement statement) {
+        private object? EvaluateStatement(BoundStatement statement, out bool exit) {
+            exit = false;
             switch (statement) {
                 case BoundBlockStatement s: {
                     ++scope;
-                    EvaluateStatements(s.Body);
+                    var result = EvaluateStatements(s.Body, out exit);
                     --scope;
-                    break;
+                    return result;
                 }
 
                 case BoundReturnStatement s: {
-                    EvaluateExpression(s.Expression);
+                    exit = true;
+                    return EvaluateExpression(s.Expression);
+                }
+
+                case BoundVoidReturnStatement: {
+                    exit = true;
                     break;
                 }
 
@@ -114,13 +124,16 @@ namespace Letmebe.Evaluation     {
                     var body = scope[s.Function];
                     if (body != null) {
                         ++scope;
+
                         for (int i = 0; i < s.Parameters.Length; ++i) {
                             var p = s.Parameters[i];
                             var symbol = s.Function.ParameterSymbols[i];
                             scope.DeclareVariable(symbol, EvaluateExpression(p));
                         }
-                        EvaluateStatement(body);
+                        var result = EvaluateStatement(body, out _);
                         --scope;
+
+                        return result;
                     }
                     break;
                 }
