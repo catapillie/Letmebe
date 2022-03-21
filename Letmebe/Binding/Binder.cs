@@ -11,22 +11,6 @@ namespace Letmebe.Binding {
 
         public Binder(DiagnosticList diagnostics) {
             Diagnostics = diagnostics;
-
-            // output <str> -> void
-            scope.TryRegisterFunction(BoundPrimitiveType.VoidPrimitive, new(
-                new BoundFunctionWord[] {
-                    new BoundFunctionIdentifierWord("output"),
-                    new BoundFunctionParameterWord(BoundPrimitiveType.StringPrimitive),
-                }
-            ), out _);
-
-            // ask <str> -> str
-            scope.TryRegisterFunction(BoundPrimitiveType.StringPrimitive, new(
-                new BoundFunctionWord[] {
-                    new BoundFunctionIdentifierWord("ask"),
-                    new BoundFunctionParameterWord(BoundPrimitiveType.StringPrimitive),
-                }
-            ), out _);
         }
 
         public BoundProgram Bind(ProgramNode program) {

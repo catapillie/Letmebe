@@ -131,6 +131,7 @@ namespace Letmebe.Evaluation     {
                             scope.DeclareVariable(symbol, EvaluateExpression(p));
                         }
                         var result = EvaluateStatement(body, out _);
+
                         --scope;
 
                         return result;
