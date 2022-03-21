@@ -12,6 +12,8 @@ namespace Letmebe.Binding {
 
         public Scope(Scope? parentScope = null) {
             ParentScope = parentScope;
+            if (parentScope != null)
+                ReturnType = parentScope.ReturnType;
         }
 
         public bool TryLookupType(string name, int genericArgumentCount, out BoundUserType type) {
