@@ -60,10 +60,7 @@ namespace Letmebe.Evaluation     {
                 }
 
                 case BoundExpressionStatement s: {
-                    var v = EvaluateExpression(s.Expression);
-                    if (s.Expression is not BoundAssignmentExpression)
-                        Console.WriteLine(v);
-                    return v;
+                    return EvaluateExpression(s.Expression);
                 }
 
                 case BoundVariableDefinitionStatement s: {
@@ -101,6 +98,24 @@ namespace Letmebe.Evaluation     {
                     if (s.Target is BoundSymbol symbol)
                         scope[symbol] = value;
                     return value;
+                }
+
+                case BoundFunctionCall s: {
+                    var f = ((BoundFunctionIdentifierWord)s.Function.Template.Words[0]).Identifier;
+                    switch (f) {
+                        case "output":
+                            Console.WriteLine(EvaluateExpression(s.Parameters[0]));
+                            return null;
+
+                        case "ask": {
+                            Console.Write(EvaluateExpression(s.Parameters[0]));
+                            return Console.ReadLine();
+                        }
+
+                        default:
+                            break;
+                    }
+                    break;
                 }
             }
 
