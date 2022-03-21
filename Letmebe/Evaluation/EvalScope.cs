@@ -14,7 +14,12 @@ namespace Letmebe.Evaluation {
             }
         }
 
+        public BoundStatement? this[BoundFunctionSymbol symbol] {
+            get => functions.TryGetValue(symbol, out var body) ? body : ParentScope?[symbol];
+        }
+
         private readonly Dictionary<BoundSymbol, object?> variables = new();
+        private readonly Dictionary<BoundFunctionSymbol, BoundStatement> functions = new();
 
         public EvalScope(EvalScope? parentScope = null) {
             ParentScope = parentScope;
@@ -22,6 +27,9 @@ namespace Letmebe.Evaluation {
 
         public void DeclareVariable(BoundSymbol symbol, object? value)
             => variables[symbol] = value;
+
+        public void DefineFunction(BoundFunctionSymbol symbol, BoundStatement body)
+            => functions[symbol] = body;
 
         public static EvalScope operator ++(EvalScope scope)
             => new(scope);

@@ -59,12 +59,22 @@ namespace Letmebe.Evaluation     {
                     break;
                 }
 
+                case BoundReturnStatement s: {
+                    Console.WriteLine(EvaluateExpression(s.Expression));
+                    break;
+                }
+
                 case BoundExpressionStatement s: {
                     return EvaluateExpression(s.Expression);
                 }
 
                 case BoundVariableDefinitionStatement s: {
                     scope.DeclareVariable(s.Variable, EvaluateExpression(s.Value));
+                    break;
+                }
+
+                case BoundFunctionDefinitionStatement s: {
+                    scope.DefineFunction(s.Symbol, s.Body);
                     break;
                 }
             }
@@ -101,19 +111,16 @@ namespace Letmebe.Evaluation     {
                 }
 
                 case BoundFunctionCall s: {
-                    var f = ((BoundFunctionIdentifierWord)s.Function.Template.Words[0]).Identifier;
-                    switch (f) {
-                        case "output":
-                            Console.WriteLine(EvaluateExpression(s.Parameters[0]));
-                            return null;
-
-                        case "ask": {
-                            Console.Write(EvaluateExpression(s.Parameters[0]));
-                            return Console.ReadLine();
+                    var body = scope[s.Function];
+                    if (body != null) {
+                        ++scope;
+                        for (int i = 0; i < s.Parameters.Length; ++i) {
+                            var p = s.Parameters[i];
+                            var symbol = s.Function.ParameterSymbols[i];
+                            scope.DeclareVariable(symbol, EvaluateExpression(p));
                         }
-
-                        default:
-                            break;
+                        EvaluateStatement(body);
+                        --scope;
                     }
                     break;
                 }

@@ -230,9 +230,13 @@ namespace Letmebe.Binding {
             ++scope; // This is placed before the arguments are declared, and after the function is registerd.
             scope.ReturnType = returnType;
 
-            foreach (var (type, name) in declaredParameters)
+            // Store the parameter symbols in the function symbol AFTER they are declared.
+            functionSymbol.ParameterSymbols = declaredParameters.Select(param => {
+                (BoundType type, string name) = param;
                 if (!scope.TryRegisterVariable(type, name, out var symbol))
                     Diagnostics.Add(Reports.FunctionParameterAlreadyDeclared(symbol));
+                return symbol;
+            }).ToArray();
 
             // BindStatement(BlockStatement) would advance the scope forward, making shadowing the function's parameters possible.
             // We don't want that, so let's bind it manually.
