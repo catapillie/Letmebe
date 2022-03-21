@@ -414,7 +414,7 @@ namespace Letmebe.Parsing {
 
             if (expr is null) {
                 Diagnostics.Add(Reports.ExpectedExpression());
-                expr = new();
+                expr = new UnknownExpression();
             }
 
             while (true) {

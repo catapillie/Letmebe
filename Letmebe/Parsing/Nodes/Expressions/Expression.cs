@@ -1,3 +1,3 @@
 ﻿namespace Letmebe.Parsing.Nodes {
-    internal class Expression : SyntaxNode { }
+    internal abstract class Expression : SyntaxNode { }
 }

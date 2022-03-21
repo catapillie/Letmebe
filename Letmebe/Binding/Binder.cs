@@ -420,7 +420,7 @@ namespace Letmebe.Binding {
                 }
             }
 
-            throw new Exception($"Unimplemented expression binding for type {expr.GetType()}");
+            return new BoundUnknownExpression();
         }
 
         private BoundUserType GetBoundUserType(Token id, int genericArgumentCount = 0) {
