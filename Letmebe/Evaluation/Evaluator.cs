@@ -60,7 +60,7 @@ namespace Letmebe.Evaluation     {
                 }
 
                 case BoundReturnStatement s: {
-                    Console.WriteLine(EvaluateExpression(s.Expression));
+                    EvaluateExpression(s.Expression);
                     break;
                 }
 

@@ -176,10 +176,10 @@ namespace Letmebe.Binding {
                         // Uses 'is not null' instead of overloaded operator '!=' (for null checking only)
                         if (scope.ReturnType is not null && boundExpression.Type != scope.ReturnType)
                             Diagnostics.Add(Reports.ExpectedReturnTypeInsteadOf(scope.ReturnType, boundExpression.Type));
-                        return new BoundReturnStatement(boundExpression);
+                        return new BoundReturnStatement(boundExpression, scope.ReturningFunction!);
                     }
 
-                    return new BoundVoidReturnStatement();
+                    return new BoundVoidReturnStatement(scope.ReturningFunction!);
                 }
 
                 case EmptyStatement:
@@ -229,6 +229,7 @@ namespace Letmebe.Binding {
 
             ++scope; // This is placed before the arguments are declared, and after the function is registerd.
             scope.ReturnType = returnType;
+            scope.ReturningFunction = functionSymbol;
 
             // Store the parameter symbols in the function symbol AFTER they are declared.
             functionSymbol.ParameterSymbols = declaredParameters.Select(param => {

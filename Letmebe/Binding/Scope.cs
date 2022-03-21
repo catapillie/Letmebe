@@ -9,11 +9,14 @@ namespace Letmebe.Binding {
         private readonly Dictionary<BoundFunctionTemplate, BoundFunctionSymbol> functions = new();
 
         public BoundType? ReturnType = null;
+        public BoundFunctionSymbol? ReturningFunction = null;
 
         public Scope(Scope? parentScope = null) {
             ParentScope = parentScope;
-            if (parentScope != null)
+            if (parentScope != null) {
                 ReturnType = parentScope.ReturnType;
+                ReturningFunction = parentScope.ReturningFunction;
+            }
         }
 
         public bool TryLookupType(string name, int genericArgumentCount, out BoundUserType type) {
