@@ -8,7 +8,7 @@
 
         public override bool Equals(object? obj) {
             if (obj is BoundFunctionParameterWord other)
-                return Type == other.Type;
+                return Type.Is(other.Type, inherit: false);
 
             return false;
         }

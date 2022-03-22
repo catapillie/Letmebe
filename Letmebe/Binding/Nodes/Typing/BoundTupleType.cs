@@ -6,11 +6,16 @@
             Types = types;
         }
 
-        public override bool Equals(BoundType other) {
-            if (other is BoundTupleType tuple)
-                return Types.SequenceEqual(tuple.Types);
-            
-            return false;
+        public override bool Is(BoundType other, bool inherit) {
+            if (other is BoundTupleType tuple) {
+                if (Types.Length == tuple.Types.Length) {
+                    for (int i = 0; i < Types.Length; i++)
+                        if (!Types[i].Is(tuple.Types[i], inherit))
+                            return inherit && base.Is(other, true);
+                    return true;
+                }
+            }
+            return inherit && base.Is(other, true);
         }
 
         public override string ToString()

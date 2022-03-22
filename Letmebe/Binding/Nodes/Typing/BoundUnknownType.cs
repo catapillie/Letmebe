@@ -10,8 +10,8 @@
             MatchesAny = matchAny;
         }
 
-        public override bool Equals(BoundType other)
-            => ReferenceEquals(this, other);
+        public override bool Is(BoundType other, bool inherit)
+            => MatchAny;
 
         public override string ToString()
             => MatchesAny ? "any" : "???";

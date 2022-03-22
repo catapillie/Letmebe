@@ -35,7 +35,7 @@ namespace Letmebe.Binding {
                     var boundCondition = BindExpression(s.Condition);
                     var boundStatement = BindStatement(s.ThenStatement);
 
-                    if (boundCondition.Type.IsKnown && boundCondition.Type != BoundPrimitiveType.BooleanPrimitive)
+                    if (Mismatch(boundCondition.Type, BoundPrimitiveType.BooleanPrimitive, inherit: false))
                         Diagnostics.Add(Reports.IfConditionMustBeBoolean());
 
                     return new BoundIfStatement(boundCondition, boundStatement);
@@ -45,7 +45,7 @@ namespace Letmebe.Binding {
                     var boundCondition = BindExpression(s.Condition);
                     var boundStatement = BindStatement(s.ThenStatement);
 
-                    if (boundCondition.Type.IsKnown && boundCondition.Type != BoundPrimitiveType.BooleanPrimitive)
+                    if (Mismatch(boundCondition.Type, BoundPrimitiveType.BooleanPrimitive, inherit: false))
                         Diagnostics.Add(Reports.IfConditionMustBeBoolean());
 
                     return new BoundUnlessStatement(boundCondition, boundStatement);
@@ -55,8 +55,8 @@ namespace Letmebe.Binding {
                     var boundCondition = BindExpression(s.Condition);
                     var boundStatement = BindStatement(s.ThenStatement);
                     var boundOtherwiseStatement = BindStatement(s.OtherwiseStatement);
-                    
-                    if (boundCondition.Type.IsKnown && boundCondition.Type != BoundPrimitiveType.BooleanPrimitive)
+
+                    if (Mismatch(boundCondition.Type, BoundPrimitiveType.BooleanPrimitive, inherit: false))
                         Diagnostics.Add(Reports.IfOtherwiseConditionMustBeBoolean());
 
                     return new BoundIfOtherwiseStatement(boundCondition, boundStatement, boundOtherwiseStatement);
@@ -66,7 +66,7 @@ namespace Letmebe.Binding {
                     var boundCondition = BindExpression(s.Condition);
                     var boundStatement = BindStatement(s.Statement);
 
-                    if (boundCondition.Type.IsKnown && boundCondition.Type != BoundPrimitiveType.BooleanPrimitive)
+                    if (Mismatch(boundCondition.Type, BoundPrimitiveType.BooleanPrimitive, inherit: false))
                         Diagnostics.Add(Reports.WhileConditionMustBeBoolean());
 
                     return new BoundWhileStatement(boundCondition, boundStatement);
@@ -76,7 +76,7 @@ namespace Letmebe.Binding {
                     var boundCondition = BindExpression(s.Condition);
                     var boundStatement = BindStatement(s.Statement);
 
-                    if (boundCondition.Type.IsKnown && boundCondition.Type != BoundPrimitiveType.BooleanPrimitive)
+                    if (Mismatch(boundCondition.Type, BoundPrimitiveType.BooleanPrimitive, inherit: false))
                         Diagnostics.Add(Reports.UntilConditionMustBeBoolean());
 
                     return new BoundUntilStatement(boundCondition, boundStatement);
@@ -90,7 +90,7 @@ namespace Letmebe.Binding {
                     var boundStatement = BindStatement(s.Statement);
                     var boundCondition = BindExpression(s.Condition);
 
-                    if (boundCondition.Type.IsKnown && boundCondition.Type != BoundPrimitiveType.BooleanPrimitive)
+                    if (Mismatch(boundCondition.Type, BoundPrimitiveType.BooleanPrimitive, inherit: false))
                         Diagnostics.Add(Reports.DoWhileConditionMustBeBoolean());
 
                     return new BoundDoWhileStatement(boundStatement, boundCondition);
@@ -100,7 +100,7 @@ namespace Letmebe.Binding {
                     var boundStatement = BindStatement(s.Statement);
                     var boundCondition = BindExpression(s.Condition);
 
-                    if (boundCondition.Type.IsKnown && boundCondition.Type != BoundPrimitiveType.BooleanPrimitive)
+                    if (Mismatch(boundCondition.Type, BoundPrimitiveType.BooleanPrimitive, inherit: false))
                         Diagnostics.Add(Reports.DoUntilConditionMustBeBoolean());
 
                     return new BoundDoUntilStatement(boundStatement, boundCondition);
@@ -114,7 +114,7 @@ namespace Letmebe.Binding {
                     var boundAmount = BindExpression(s.Amount);
                     var boundStatement = BindStatement(s.Statement);
 
-                    if (boundAmount.Type.IsKnown && boundAmount.Type != BoundPrimitiveType.IntegerPrimitive)
+                    if (Mismatch(boundAmount.Type, BoundPrimitiveType.IntegerPrimitive, inherit: false))
                         Diagnostics.Add(Reports.RepeatTimesAmountMustBeInteger());
 
                     return new BoundRepeatTimesStatement(boundAmount, boundStatement);
@@ -136,7 +136,7 @@ namespace Letmebe.Binding {
                     if (!scope.TryRegisterVariable(type, name, out var symbol))
                         Diagnostics.Add(Reports.VariableAlreadyExists(symbol));
 
-                    if (symbol.Type.IsKnown && value.Type.IsKnown && value.Type != symbol.Type)
+                    if (Mismatch(value.Type, symbol.Type))
                         Diagnostics.Add(Reports.CannotAssignTypeToTargetType(value.Type, symbol.Type));
 
                     return new BoundVariableDefinitionStatement(symbol, value);
@@ -158,7 +158,7 @@ namespace Letmebe.Binding {
                         var boundExpression = BindExpression(s.Expression);
 
                         // Uses 'is not null' instead of overloaded operator '!=' (for null checking only)
-                        if (scope.ReturnType is not null && boundExpression.Type != scope.ReturnType)
+                        if (scope.ReturnType is not null && Mismatch(boundExpression.Type, scope.ReturnType))
                             Diagnostics.Add(Reports.ExpectedReturnTypeInsteadOf(scope.ReturnType, boundExpression.Type));
                         return new BoundReturnStatement(boundExpression, scope.ReturningFunction!);
                     }
@@ -322,7 +322,7 @@ namespace Letmebe.Binding {
                     var boundTarget = BindExpression(e.Target);
                     var boundValue = BindExpression(e.Value);
 
-                    if (boundTarget.Type.IsKnown && boundValue.Type.IsKnown && boundTarget.Type != boundValue.Type)
+                    if (Mismatch(boundValue.Type, boundTarget.Type))
                         Diagnostics.Add(Reports.CannotAssignTypeToTargetType(boundValue.Type, boundTarget.Type));
 
                     return new BoundAssignmentExpression(boundTarget, boundValue);
@@ -338,7 +338,8 @@ namespace Letmebe.Binding {
                     var boundRight = BindExpression(e.RightOperand);
 
                     foreach (BoundBinaryOperator op in BoundBinaryOperator.BinaryOperators) {
-                        if (op.OperatorToken == opToken && op.LeftType == boundLeft.Type && op.RightType == boundRight.Type)
+                        if (op.OperatorToken == opToken && boundLeft.Type.Is(op.LeftType, inherit: false) &&
+                                                           boundRight.Type.Is(op.RightType, inherit: false))
                             return new BoundBinaryOperation(boundLeft, op, boundRight);
                     }
 
@@ -354,7 +355,7 @@ namespace Letmebe.Binding {
                     var opToken = e.Op.Kind;
 
                     foreach (BoundUnaryOperator op in BoundUnaryOperator.UnaryOperators) {
-                        if (op.OperatorToken == opToken && op.OperandType == boundOperand.Type)
+                        if (op.OperatorToken == opToken && boundOperand.Type.Is(op.OperandType, inherit: false))
                             return new BoundUnaryOperation(boundOperand, op);
                     }
 
@@ -376,7 +377,7 @@ namespace Letmebe.Binding {
                         var type = boundValues[0].Type;
 
                         for (int i = 1; i < boundValues.Length; i++) {
-                            if (type.IsKnown && boundValues[i].Type != type) {
+                            if (Mismatch(boundValues[i].Type, type, inherit: false)) {
                                 Diagnostics.Add(Reports.ValuesInArrayMustBeOfSameType());
                                 return new BoundArrayExpression(Array.Empty<BoundExpression>(), BoundUnknownType.Unknown);
                             }
@@ -391,8 +392,9 @@ namespace Letmebe.Binding {
                     var boundExpression = BindExpression(e.Expression);
                     var boundIndexExpression = BindExpression(e.IndexExpression);
 
+                    // TODO: multiple arguments indexation
                     foreach (BoundIndexerOperator op in BoundIndexerOperator.IndexerOperators) {
-                        if (op.IndexedType == boundExpression.Type && op.IndexerTypes[0] == boundIndexExpression.Type)
+                        if (boundExpression.Type.Is(op.IndexedType, inherit: false) && boundIndexExpression.Type.Is(op.IndexerTypes[0], inherit: false))
                             return new BoundIndexingExpression(boundExpression, boundIndexExpression, op);
                     }
 
@@ -429,6 +431,9 @@ namespace Letmebe.Binding {
 
             return new BoundUnknownExpression();
         }
+
+        private bool Mismatch(BoundType type, BoundType target, bool inherit = true)
+            => type.IsKnown && target.IsKnown && !type.Is(target, inherit);
 
         private BoundUserType GetBoundUserType(Token id, int genericArgumentCount = 0) {
             var name = id.Str;

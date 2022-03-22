@@ -19,12 +19,8 @@
             Type = type;
         }
 
-        public override bool Equals(BoundType other) {
-            if (other is BoundPrimitiveType primitive)
-                return Type == primitive.Type;
-
-            return false;
-        }
+        public override bool Is(BoundType other, bool inherit)
+            => (inherit && base.Is(other, true)) || (other is BoundPrimitiveType primitive && Type == primitive.Type);
 
         public override string ToString()
             => Type switch {

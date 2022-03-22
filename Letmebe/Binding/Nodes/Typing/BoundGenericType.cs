@@ -8,11 +8,16 @@
             InnerTypes = innerType;
         }
 
-        public override bool Equals(BoundType other) {
-            if (other is BoundGenericType generic)
-                return UserType == generic.UserType && InnerTypes.SequenceEqual(generic.InnerTypes);
-
-            return false;
+        public override bool Is(BoundType other, bool inherit) {
+            if (other is BoundGenericType generic) {
+                if (InnerTypes.Length == generic.InnerTypes.Length) {
+                    for (int i = 0; i < InnerTypes.Length; i++)
+                        if (!InnerTypes[i].Is(generic.InnerTypes[i]))
+                            return inherit && base.Is(other, true);
+                    return true;
+                }
+            }
+            return inherit && base.Is(other, true);
         }
 
         public override string ToString()

@@ -7,12 +7,8 @@
             ReturnType = returnType;
         }
 
-        public override bool Equals(BoundType other) {
-            if (other is BoundFunctionType function)
-                return ParameterType == function.ParameterType && ReturnType == function.ReturnType;
-
-            return false;
-        }
+        public override bool Is(BoundType other, bool inherit)
+            => (inherit && base.Is(other, true)) || (other is BoundFunctionType function && ParameterType.Is(function.ParameterType, inherit) && ReturnType.Is(function.ReturnType, inherit));
 
         public override string ToString() 
             => ParameterType.ToString() + " -> " + ReturnType.ToString();

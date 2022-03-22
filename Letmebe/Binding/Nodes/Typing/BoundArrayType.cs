@@ -5,12 +5,8 @@
             Type = type;
         }
 
-        public override bool Equals(BoundType other) {
-            if (other is BoundArrayType array)
-                return Type.Equals(array.Type);
-
-            return false;
-        }
+        public override bool Is(BoundType other, bool inherit)
+            => (inherit && base.Is(other, true)) || (other is BoundArrayType array && Type.Is(array.Type, inherit));
 
         public override string ToString()
             => "[" + Type.ToString() + "]";

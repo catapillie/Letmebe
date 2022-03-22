@@ -8,9 +8,6 @@
             GenericArgumentCount = genericArgumentCount;
         }
 
-        public override bool Equals(BoundType other)
-            => ReferenceEquals(this, other);
-
         public override string ToString()
             => Name;
     }
