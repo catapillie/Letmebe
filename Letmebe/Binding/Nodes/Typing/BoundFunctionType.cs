@@ -8,7 +8,7 @@
         }
 
         public override bool Is(BoundType other, bool inherit)
-            => (inherit && base.Is(other, true)) || (other is BoundFunctionType function && ParameterType.Is(function.ParameterType, inherit) && ReturnType.Is(function.ReturnType, inherit));
+            => base.Is(other, inherit) || (other is BoundFunctionType function && ParameterType.Is(function.ParameterType, inherit) && ReturnType.Is(function.ReturnType, inherit));
 
         public override string ToString() 
             => ParameterType.ToString() + " -> " + ReturnType.ToString();

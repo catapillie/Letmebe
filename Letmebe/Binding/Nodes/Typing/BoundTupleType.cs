@@ -11,11 +11,11 @@
                 if (Types.Length == tuple.Types.Length) {
                     for (int i = 0; i < Types.Length; i++)
                         if (!Types[i].Is(tuple.Types[i], inherit))
-                            return inherit && base.Is(other, true);
+                            return base.Is(other, inherit);
                     return true;
                 }
             }
-            return inherit && base.Is(other, true);
+            return base.Is(other, inherit);
         }
 
         public override string ToString()

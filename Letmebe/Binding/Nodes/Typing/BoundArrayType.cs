@@ -6,7 +6,7 @@
         }
 
         public override bool Is(BoundType other, bool inherit)
-            => (inherit && base.Is(other, true)) || (other is BoundArrayType array && Type.Is(array.Type, inherit));
+            => base.Is(other, inherit) || (other is BoundArrayType array && Type.Is(array.Type, inherit));
 
         public override string ToString()
             => "[" + Type.ToString() + "]";
