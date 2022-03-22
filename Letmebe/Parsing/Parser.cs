@@ -397,7 +397,22 @@ namespace Letmebe.Parsing {
                 var expression = ParseExpression();
                 var right = Match(TokenKind.RIGHTPARENTHESIS);
                 expr = new ParenthesizedExpression(left, expression, right);
-            } else if (TryMatch(TokenKind.INTEGER, out var intToken))
+            } 
+            
+            else if (TryMatch(TokenKind.LEFTBRACKET, out var leftBracketToken)) {
+                List<Expression> values = new();
+
+                do {
+                    if (lookahead.Kind.IsBeginningOfExpression())
+                        values.Add(ParseExpression());
+                    else break;
+                } while (TryMatch(TokenKind.COMMA, out _));
+
+                var rightBracketToken = Match(TokenKind.RIGHTBRACKET);
+                expr = new ArrayExpression(leftBracketToken, values.ToArray(), rightBracketToken);
+            } 
+            
+            else if (TryMatch(TokenKind.INTEGER, out var intToken))
                 expr = new IntegerLiteral(intToken);
             else if (TryMatch(TokenKind.DECIMAL, out var decimalNode))
                 expr = new DecimalLiteral(decimalNode);

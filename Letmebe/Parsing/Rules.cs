@@ -31,6 +31,7 @@ namespace Letmebe.Parsing {
         public static bool IsBeginningOfExpression(this TokenKind token)
             => token.UnaryOperationPrecedence() > 0 || token is
                 TokenKind.LEFTPARENTHESIS or
+                TokenKind.LEFTBRACKET or
                 TokenKind.INTEGER or
                 TokenKind.DECIMAL or
                 TokenKind.STRING or

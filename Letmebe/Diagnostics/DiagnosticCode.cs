@@ -194,5 +194,10 @@
         /// Expression statement must be assignment or function call
         /// </summary>
         LMB0039,
+
+        /// <summary>
+        /// Values in array must all share the same type
+        /// </summary>
+        LMB0040,
     }
 }

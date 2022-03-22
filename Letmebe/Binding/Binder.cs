@@ -369,6 +369,24 @@ namespace Letmebe.Binding {
                     throw new NotImplementedException("TODO: Member lookup");
                 }
 
+                case ArrayExpression e: {
+                    var boundValues = e.Values.Select(v => BindExpression(v)).ToArray();
+
+                    if (boundValues.Length > 0) {
+                        var type = boundValues[0].Type;
+
+                        for (int i = 1; i < boundValues.Length; i++) {
+                            if (type.IsKnown && boundValues[i].Type != type) {
+                                Diagnostics.Add(Reports.ValuesInArrayMustBeOfSameType());
+                                return new BoundArrayExpression(Array.Empty<BoundExpression>(), BoundType.Unknown);
+                            }
+                        }
+
+                        return new BoundArrayExpression(boundValues, type);
+                    } else
+                        return new BoundArrayExpression(Array.Empty<BoundExpression>(), BoundType.Unknown);
+                }
+
                 case IndexingExpression e: {
                     var boundExpression = BindExpression(e.Expression);
                     var boundIndexExpression = BindExpression(e.IndexExpression);

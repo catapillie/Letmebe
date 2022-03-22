@@ -159,5 +159,9 @@ namespace Letmebe.Diagnostics {
         internal static Diagnostic ExpressionStatementMustBeFunctionCallOrAssignment() {
             return new("An expression can only be a statement if it is an assignment or a function call", DiagnosticCode.LMB0039);
         }
+
+        internal static Diagnostic ValuesInArrayMustBeOfSameType() {
+            return new("All values in an array must share the same type", DiagnosticCode.LMB0040);
+        }
     }
 }
