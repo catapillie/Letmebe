@@ -43,7 +43,7 @@ namespace Letmebe.Binding {
             else if (ParentScope is not null)
                 return ParentScope.TryLookupVariable(name, out symbol);
 
-            symbol = new(BoundType.Unknown, name);
+            symbol = new(BoundUnknownType.Unknown, name);
             return false;
         }
 
@@ -62,7 +62,7 @@ namespace Letmebe.Binding {
             else if (ParentScope is not null)
                 return ParentScope.TryLookupFunction(template, out function);
 
-            function = new(template, BoundType.Unknown);
+            function = new(template, BoundUnknownType.Unknown);
             return false;
         }
 

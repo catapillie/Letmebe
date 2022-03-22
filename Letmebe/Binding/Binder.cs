@@ -284,7 +284,7 @@ namespace Letmebe.Binding {
                 }
             }
 
-            return BoundType.Unknown;
+            return BoundUnknownType.Unknown;
         }
 
         private BoundExpression BindExpression(Expression expr) {
@@ -345,7 +345,7 @@ namespace Letmebe.Binding {
                     if (boundLeft.Type.IsKnown && boundRight.Type.IsKnown)
                         Diagnostics.Add(Reports.UndefinedBinaryOperator(opToken, boundLeft.Type, boundRight.Type));
 
-                    BoundBinaryOperator unknownOperator = new(opToken, BoundBinaryOperator.Operation.Unknown, boundLeft.Type, boundRight.Type, BoundType.Unknown);
+                    BoundBinaryOperator unknownOperator = new(opToken, BoundBinaryOperator.Operation.Unknown, boundLeft.Type, boundRight.Type, BoundUnknownType.Unknown);
                     return new BoundBinaryOperation(boundLeft, unknownOperator, boundRight);
                 }
 
@@ -361,7 +361,7 @@ namespace Letmebe.Binding {
                     if (boundOperand.Type.IsKnown)
                         Diagnostics.Add(Reports.UndefinedUnaryOperator(opToken, boundOperand.Type));
 
-                    BoundUnaryOperator unknownOperator = new(opToken, BoundUnaryOperator.Operation.Unknown, boundOperand.Type, BoundType.Unknown);
+                    BoundUnaryOperator unknownOperator = new(opToken, BoundUnaryOperator.Operation.Unknown, boundOperand.Type, BoundUnknownType.Unknown);
                     return new BoundUnaryOperation(boundOperand, unknownOperator);
                 }
 
@@ -378,13 +378,13 @@ namespace Letmebe.Binding {
                         for (int i = 1; i < boundValues.Length; i++) {
                             if (type.IsKnown && boundValues[i].Type != type) {
                                 Diagnostics.Add(Reports.ValuesInArrayMustBeOfSameType());
-                                return new BoundArrayExpression(Array.Empty<BoundExpression>(), BoundType.Unknown);
+                                return new BoundArrayExpression(Array.Empty<BoundExpression>(), BoundUnknownType.Unknown);
                             }
                         }
 
                         return new BoundArrayExpression(boundValues, type);
                     } else
-                        return new BoundArrayExpression(Array.Empty<BoundExpression>(), BoundType.Unknown);
+                        return new BoundArrayExpression(Array.Empty<BoundExpression>(), BoundUnknownType.Matching);
                 }
 
                 case IndexingExpression e: {
@@ -399,7 +399,7 @@ namespace Letmebe.Binding {
                     if (boundExpression.Type.IsKnown && boundIndexExpression.Type.IsKnown)
                         Diagnostics.Add(Reports.UndefinedIndexerOperator(boundExpression.Type, boundIndexExpression.Type));
 
-                    BoundIndexerOperator unknownOperator = new(boundExpression.Type, BoundIndexerOperator.Operation.Unknown, new[] { boundIndexExpression.Type }, BoundType.Unknown);
+                    BoundIndexerOperator unknownOperator = new(boundExpression.Type, BoundIndexerOperator.Operation.Unknown, new[] { boundIndexExpression.Type }, BoundUnknownType.Unknown);
                     return new BoundIndexingExpression(boundExpression, boundIndexExpression, unknownOperator);
                 }
 

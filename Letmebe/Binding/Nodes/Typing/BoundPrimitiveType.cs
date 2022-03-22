@@ -12,7 +12,6 @@
         public static readonly BoundPrimitiveType ObjectPrimitive       = new(PrimitiveType.Object);
         public static readonly BoundPrimitiveType TypePrimitive         = new(PrimitiveType.Type);
         public static readonly BoundPrimitiveType VoidPrimitive         = new(PrimitiveType.Void);
-        public static readonly BoundPrimitiveType UnknownPrimitive      = new(PrimitiveType.Unknown);
 
         public readonly PrimitiveType Type;
 
@@ -36,7 +35,6 @@
                 PrimitiveType.Character => "char",
                 PrimitiveType.Object => "obj",
                 PrimitiveType.Type => "type",
-                PrimitiveType.Void => "void",
                 _ => "???"
             };
     }
