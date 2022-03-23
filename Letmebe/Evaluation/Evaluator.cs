@@ -101,6 +101,10 @@ namespace Letmebe.Evaluation     {
                     return scope[e];
                 }
 
+                case BoundArrayExpression e: {
+                    return e.Values.Select(v => EvaluateExpression(v)).ToArray();
+                }
+
                 case BoundBinaryOperation e: {
                     return EvaluateBinaryOperation(e);
                 }
@@ -281,6 +285,7 @@ namespace Letmebe.Evaluation     {
 
             return indexing.Operator.Op switch {
                 BoundIndexerOperator.Operation.StringIndexing => ((string)operand)[(int)index],
+                BoundIndexerOperator.Operation.ArrayIndexing => ((object?[])operand)[(int)index],
                 _ => null,
             };
         }
