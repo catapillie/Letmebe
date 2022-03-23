@@ -2,6 +2,7 @@
     internal sealed class BoundIndexerOperator {
         public enum Operation {
             StringIndexing,
+            ArrayIndexing, // manually used
 
             Unknown,
         }

@@ -163,5 +163,9 @@ namespace Letmebe.Diagnostics {
         internal static Diagnostic ValuesInArrayMustBeOfSameType() {
             return new("All values in an array must share the same type", DiagnosticCode.LMB0040);
         }
+
+        internal static Diagnostic ArrayMustBeIndexedWithInteger() {
+            return new("An array must be indexed with an integer", DiagnosticCode.LMB0041);
+        }
     }
 }

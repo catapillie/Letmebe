@@ -392,6 +392,14 @@ namespace Letmebe.Binding {
                     var boundExpression = BindExpression(e.Expression);
                     var boundIndexExpression = BindExpression(e.IndexExpression);
 
+                    if (boundExpression.Type is BoundArrayType array) {
+                        if (Mismatch(boundIndexExpression.Type, BoundPrimitiveType.IntegerPrimitive, inherit: false))
+                            Diagnostics.Add(Reports.ArrayMustBeIndexedWithInteger());
+
+                        BoundIndexerOperator indexingOpertator = new(boundExpression.Type, BoundIndexerOperator.Operation.ArrayIndexing, new[] { boundIndexExpression.Type }, array.Type);
+                        return new BoundIndexingExpression(boundExpression, boundIndexExpression, indexingOpertator);
+                    }
+
                     // TODO: multiple arguments indexation
                     foreach (BoundIndexerOperator op in BoundIndexerOperator.IndexerOperators) {
                         if (boundExpression.Type.Is(op.IndexedType, inherit: false) && boundIndexExpression.Type.Is(op.IndexerTypes[0], inherit: false))
