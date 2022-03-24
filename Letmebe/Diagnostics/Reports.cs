@@ -160,12 +160,8 @@ namespace Letmebe.Diagnostics {
             return new("An expression can only be a statement if it is an assignment or a function call", DiagnosticCode.LMB0039);
         }
 
-        internal static Diagnostic ValuesInArrayMustBeOfSameType() {
-            return new("All values in an array must share the same type", DiagnosticCode.LMB0040);
-        }
-
         internal static Diagnostic ArrayMustBeIndexedWithInteger() {
-            return new("An array must be indexed with an integer", DiagnosticCode.LMB0041);
+            return new("An array must be indexed with an integer", DiagnosticCode.LMB0040);
         }
     }
 }

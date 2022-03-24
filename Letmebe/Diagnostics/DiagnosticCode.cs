@@ -196,13 +196,8 @@
         LMB0039,
 
         /// <summary>
-        /// Values in array must all share the same type
-        /// </summary>
-        LMB0040,
-
-        /// <summary>
         /// Array must be indexed with integer
         /// </summary>
-        LMB0041,
+        LMB0040,
     }
 }
