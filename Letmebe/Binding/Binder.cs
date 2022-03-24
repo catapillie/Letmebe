@@ -374,14 +374,7 @@ namespace Letmebe.Binding {
                     var boundValues = e.Values.Select(v => BindExpression(v)).ToArray();
 
                     if (boundValues.Length > 0) {
-                        var type = boundValues[0].Type;
-
-                        for (int i = 1; i < boundValues.Length; i++) {
-                            if (Mismatch(boundValues[i].Type, type, inherit: false)) {
-                                Diagnostics.Add(Reports.ValuesInArrayMustBeOfSameType());
-                                return new BoundArrayExpression(Array.Empty<BoundExpression>(), BoundUnknownType.Unknown);
-                            }
-                        }
+                        var type = FindLeastInheritedCommonType(boundValues.Select(v => v.Type).ToArray());
 
                         return new BoundArrayExpression(boundValues, type);
                     } else
@@ -440,8 +433,36 @@ namespace Letmebe.Binding {
             return new BoundUnknownExpression();
         }
 
-        private bool Mismatch(BoundType type, BoundType target, bool inherit = true)
+        private static bool Mismatch(BoundType type, BoundType target, bool inherit = true)
             => type.IsKnown && target.IsKnown && !type.Is(target, inherit);
+
+        private static BoundType FindLeastInheritedCommonType(BoundType[] types) {
+            if (types.Length == 0)
+                return BoundUnknownType.Matching;
+            else if (types.Length == 1)
+                return types[0];
+
+            List<BoundType> condensed = new();
+            foreach (var type in types) {
+                if (!condensed.Any(t => type.Is(t, inherit: false)))
+                    condensed.Add(type);
+            }
+
+            if (condensed.Count == 1)
+                return condensed[0];
+
+            condensed.Sort((a, b) => a.Is(b) ? -1 : 1);
+            var firstCommon = condensed.FirstOrDefault(type => condensed.All(t => t.Is(type)));
+            if (firstCommon != null)
+                return firstCommon;
+
+            var last = condensed.Last();
+            do {
+                last = last.Base;
+            } while (last != null && !condensed.All(t => t.Is(last)));
+
+            return BoundPrimitiveType.ObjectPrimitive;
+        }
 
         private BoundUserType GetBoundUserType(Token id, int genericArgumentCount = 0) {
             var name = id.Str;
