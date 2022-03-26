@@ -31,6 +31,7 @@
                 PrimitiveType.Character => "char",
                 PrimitiveType.Object => "obj",
                 PrimitiveType.Type => "type",
+                PrimitiveType.Void => "void",
                 _ => "???"
             };
     }
