@@ -22,7 +22,7 @@ namespace Letmebe.Binding {
         public bool TryLookupType(string name, int genericArgumentCount, out BoundUserType type) {
             if (types.TryGetValue((name, genericArgumentCount), out type!))
                 return true;
-            else if (ParentScope is not null)
+            else if (ParentScope != null)
                 return ParentScope.TryLookupType(name, genericArgumentCount, out type);
 
             type = new(name, genericArgumentCount);
@@ -40,7 +40,7 @@ namespace Letmebe.Binding {
         public bool TryLookupVariable(string name, out BoundSymbol symbol) {
             if (variables.TryGetValue(name, out symbol!))
                 return true;
-            else if (ParentScope is not null)
+            else if (ParentScope != null)
                 return ParentScope.TryLookupVariable(name, out symbol);
 
             symbol = new(BoundUnknownType.Unknown, name);
@@ -56,10 +56,10 @@ namespace Letmebe.Binding {
         }
 
         public bool TryLookupFunction(BoundFunctionTemplate template, out BoundFunctionSymbol function) {
-            function = functions.Where(pair => pair.Key.Equals(template)).FirstOrDefault().Value;
-            if (function is not null)
+            function = functions.FirstOrDefault(pair => template.Matches(pair.Key)).Value;
+            if (function != null)
                 return true;
-            else if (ParentScope is not null)
+            else if (ParentScope != null)
                 return ParentScope.TryLookupFunction(template, out function);
 
             function = new(template, BoundUnknownType.Unknown);
@@ -67,8 +67,8 @@ namespace Letmebe.Binding {
         }
 
         public bool TryRegisterFunction(BoundType type, BoundFunctionTemplate template, out BoundFunctionSymbol symbol) {
-            symbol = functions.Where(pair => pair.Key.Equals(template)).FirstOrDefault().Value;
-            if (symbol is not null)
+            symbol = functions.FirstOrDefault(pair => template.Matches(pair.Key)).Value;
+            if (symbol != null)
                 return false;
 
             functions[template] = symbol = new(template, type);

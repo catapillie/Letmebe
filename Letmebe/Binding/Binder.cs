@@ -160,8 +160,7 @@ namespace Letmebe.Binding {
                     if (s.Expression is not null) {
                         var boundExpression = BindExpression(s.Expression);
 
-                        // Uses 'is not null' instead of overloaded operator '!=' (for null checking only)
-                        if (scope.ReturnType is not null && Mismatch(boundExpression.Type, scope.ReturnType))
+                        if (scope.ReturnType != null && Mismatch(boundExpression.Type, scope.ReturnType))
                             Diagnostics.Add(Reports.ExpectedReturnTypeInsteadOf(scope.ReturnType, boundExpression.Type));
                         return new BoundReturnStatement(boundExpression, scope.ReturningFunction!);
                     }
