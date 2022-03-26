@@ -1,4 +1,5 @@
-﻿using Letmebe.Binding.Nodes;
+﻿using Letmebe.Binding;
+using Letmebe.Binding.Nodes;
 using System.Text;
 
 namespace Letmebe.Evaluation     {
@@ -125,6 +126,9 @@ namespace Letmebe.Evaluation     {
                 }
 
                 case BoundFunctionCall s: {
+                    if (EvaluateBuiltInFunction(s, out var value))
+                        return value;
+
                     var body = scope[s.Function];
                     if (body != null) {
                         ++scope;
@@ -288,6 +292,24 @@ namespace Letmebe.Evaluation     {
                 BoundIndexerOperator.Operation.ArrayIndexing => ((object?[])operand)[(int)index],
                 _ => null,
             };
+        }
+
+        private bool EvaluateBuiltInFunction(BoundFunctionCall call, out object? value) {
+            value = null;
+            var function = call.Function;
+
+            if (function == BuiltInFunctions.PrintFunction) {
+                Console.WriteLine(EvaluateExpression(call.Parameters[0])); 
+                return true;
+            }
+
+            if (function == BuiltInFunctions.AskFunction) {
+                Console.Write(EvaluateExpression(call.Parameters[0]));
+                value = Console.ReadLine() ?? string.Empty;
+                return true;
+            }
+
+            return false;
         }
     }
 }

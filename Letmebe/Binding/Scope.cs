@@ -75,6 +75,9 @@ namespace Letmebe.Binding {
             return true;
         }
 
+        public void RegisterBuiltInFunction(BoundFunctionSymbol function)
+            => functions[function.Template] = function;
+
         public static Scope operator ++(Scope scope)
             => new(scope);
 

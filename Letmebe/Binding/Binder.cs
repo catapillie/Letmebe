@@ -11,6 +11,9 @@ namespace Letmebe.Binding {
 
         public Binder(DiagnosticList diagnostics) {
             Diagnostics = diagnostics;
+
+            scope.RegisterBuiltInFunction(BuiltInFunctions.PrintFunction);
+            scope.RegisterBuiltInFunction(BuiltInFunctions.AskFunction);
         }
 
         public BoundProgram Bind(ProgramNode program) {
